@@ -2,3 +2,15 @@ version: '3.8'
 
 services:
   ingestion:
+
+  db:
+    image: postgres:17-alpine
+    env_file:
+      - .env
+    volumes:
+      - ./postgresDB:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: "no"
+
+
