@@ -1,3 +1,4 @@
 dbt-core
-dbt-postgresql
+dbt-postgres
+psycopg[binary]
 requests
