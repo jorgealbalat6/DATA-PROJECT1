@@ -9,6 +9,8 @@ services:
     env_file: .env
     depends_on:
       - db
+    networks:
+      - kafka-net
     restart: "no"
   alertas:
     build:
@@ -17,6 +19,8 @@ services:
     image: alertas:latest
     depends_on:
       - kafka
+    networks:
+      - kafka-net
     restart: "no"
   dbt:
     build:
@@ -26,6 +30,8 @@ services:
     env_file: .env
     depends_on:
       - db
+    networks:
+      - kafka-net
     restart: "no"
   db:
     image: debezium/postgres:17-alpine
@@ -108,7 +114,9 @@ services:
     image: debezium/connect:2.7.3.Final
     ports:
       - 8083:8083
-    links:
+    networks:
+      - kafka-net
+    depends_on:
       - kafka
       - db
     environment:
