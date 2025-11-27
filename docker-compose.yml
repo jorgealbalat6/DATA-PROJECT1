@@ -28,7 +28,7 @@ services:
       - db
     restart: "no"
   db:
-    image: postgres:17-alpine
+    image: debezium/postgres:17-alpine
     env_file:
       - .env
     volumes:
