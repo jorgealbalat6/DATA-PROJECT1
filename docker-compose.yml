@@ -12,6 +12,17 @@ services:
     networks:
       - kafka-net
     restart: "no"
+  ingestionMAD:
+    build:
+      context: ./ingestion_datosMAD
+      dockerfile: Dockerfile.pyIngestionMAD
+    image: ingestion_datosMAD:latest
+    env_file: .env
+    depends_on:
+      - db
+    networks:
+      - kafka-net
+    restart: "no"
   # alertas:
   #   build:
   #     context: ./alertas
