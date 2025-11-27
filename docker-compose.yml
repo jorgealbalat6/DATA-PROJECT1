@@ -12,29 +12,29 @@ services:
     networks:
       - kafka-net
     restart: "no"
-  alertas:
-    build:
-      context: ./alertas
-      dockerfile: Dockerfile.pyAlertas
-    image: alertas:latest
-    depends_on:
-      - kafka
-    networks:
-      - kafka-net
-    tty: true
-    restart: "no"
-  dbt:
-    build:
-      context: ./dbt
-      dockerfile: Dockerfile.pyDBT
-    image: dbt:latest
-    env_file: .env
-    depends_on:
-      - db
-    networks:
-      - kafka-net
-    tty: true
-    restart: "no"
+  # alertas:
+  #   build:
+  #     context: ./alertas
+  #     dockerfile: Dockerfile.pyAlertas
+  #   image: alertas:latest
+  #   depends_on:
+  #     - kafka
+  #   networks:
+  #     - kafka-net
+  #   tty: true
+  #   restart: "no"
+  # dbt:
+  #   build:
+  #     context: ./dbt
+  #     dockerfile: Dockerfile.pyDBT
+  #   image: dbt:latest
+  #   env_file: .env
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     - kafka-net
+  #   tty: true
+  #   restart: "no"
   db:
     image: debezium/postgres:17-alpine
     env_file:
