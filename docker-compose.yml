@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 services:
   ingestion:
@@ -15,9 +15,17 @@ services:
       context: .
       dockerfile: Dockerfile.pyAlertas
     image: alertas:latest
-    env_file: .env
     depends_on:
       - kafka
+    restart: "no"
+  dbt:
+    build:
+      context: .
+      dockerfile: Dockerfile.pyDBT
+    image: dbt:latest
+    env_file: .env
+    depends_on:
+      - db
     restart: "no"
   db:
     image: postgres:17-alpine
