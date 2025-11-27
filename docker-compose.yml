@@ -21,6 +21,7 @@ services:
       - kafka
     networks:
       - kafka-net
+    tty: true
     restart: "no"
   dbt:
     build:
@@ -32,6 +33,7 @@ services:
       - db
     networks:
       - kafka-net
+    tty: true
     restart: "no"
   db:
     image: debezium/postgres:17-alpine
