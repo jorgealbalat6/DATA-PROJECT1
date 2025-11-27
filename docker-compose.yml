@@ -3,7 +3,7 @@ version: '3.9'
 services:
   ingestion:
     build:
-      context: .
+      context: ./ingestion
       dockerfile: Dockerfile.pyIngestion
     image: ingestion:latest
     env_file: .env
@@ -12,7 +12,7 @@ services:
     restart: "no"
   alertas:
     build:
-      context: .
+      context: ./alertas
       dockerfile: Dockerfile.pyAlertas
     image: alertas:latest
     depends_on:
@@ -20,7 +20,7 @@ services:
     restart: "no"
   dbt:
     build:
-      context: .
+      context: ./dbt
       dockerfile: Dockerfile.pyDBT
     image: dbt:latest
     env_file: .env
