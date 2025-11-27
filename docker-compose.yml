@@ -44,7 +44,10 @@ services:
       - ./postgresDB:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - kafka-net
     restart: "no"
+  
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
     container_name: zookeeper

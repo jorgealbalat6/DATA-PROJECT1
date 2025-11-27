@@ -6,8 +6,7 @@ CREATE TABLE IF NOT EXISTS calidad_aire(
     magnitud_id INT,
     ANO INT,
     MES INT,
-    DIA INT,
-    fecha_act VARCHAR(20),        
+    DIA INT,        
     H01 INT,
     V01 CHAR(1),
     H02 INT,
@@ -55,4 +54,4 @@ CREATE TABLE IF NOT EXISTS calidad_aire(
     H23 INT,
     V23 CHAR(1),
     H24 INT,
-    V24 CHAR(1));
+    V24 CHAR(1))
