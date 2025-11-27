@@ -104,6 +104,20 @@ services:
     tty: true             
     networks:
       - kafka-net
+  connect:
+    image: debezium/connect:2.7.3.Final
+    ports:
+      - 8083:8083
+    links:
+      - kafka
+      - db
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=my_connect_configs
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+      - STATUS_STORAGE_TOPIC=my_connect_statuses
+
 networks:
   kafka-net:
     driver: bridge
