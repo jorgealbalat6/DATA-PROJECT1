@@ -36,7 +36,7 @@ services:
   #   tty: true
   #   restart: "no"
   db:
-    image: debezium/postgres:17-alpine
+    image: postgres:17-alpine
     env_file:
       - .env
     volumes:
@@ -116,22 +116,19 @@ services:
     tty: true             
     networks:
       - kafka-net
-  connect:
-    image: debezium/connect:2.7.3.Final
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4:4.16
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    volumes:
+      - pgadmin:/root/.pgadmin
     ports:
-      - 8083:8083
+      - "${PGADMIN_PORT:-5050}:80"
     networks:
       - kafka-net
-    depends_on:
-      - kafka
-      - db
-    environment:
-      - BOOTSTRAP_SERVERS=kafka:9092
-      - GROUP_ID=1
-      - CONFIG_STORAGE_TOPIC=my_connect_configs
-      - OFFSET_STORAGE_TOPIC=my_connect_offsets
-      - STATUS_STORAGE_TOPIC=my_connect_statuses
-
+    restart: unless-stopped
 networks:
   kafka-net:
     driver: bridge
