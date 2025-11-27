@@ -40,8 +40,8 @@ services:
     env_file:
       - .env
     volumes:
-      - ./postgresDB:/var/lib/postgresql/data
       - ./docker-init:/docker-entrypoint-initdb.d
+      - ./postgresDB:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     restart: "no"
