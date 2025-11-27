@@ -23,18 +23,18 @@ services:
   #     - kafka-net
   #   tty: true
   #   restart: "no"
-  # dbt:
-  #   build:
-  #     context: ./dbt
-  #     dockerfile: Dockerfile.pyDBT
-  #   image: dbt:latest
-  #   env_file: .env
-  #   depends_on:
-  #     - db
-  #   networks:
-  #     - kafka-net
-  #   tty: true
-  #   restart: "no"
+  dbt:
+    build:
+      context: ./dbt
+      dockerfile: Dockerfile.pyDBT
+    image: dbt:latest
+    env_file: .env
+    depends_on:
+      - db
+    networks:
+      - kafka-net
+    tty: true
+    restart: "no"
   db:
     image: postgres:17-alpine
     env_file:
