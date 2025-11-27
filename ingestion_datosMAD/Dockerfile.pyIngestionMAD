@@ -1,9 +1,9 @@
 FROM python:3.12-slim
 
-WORKDIR /app/datosMAD
+WORKDIR /app/datos_historicos/MAD
 
 COPY requirements.txt . 
-COPY ingestion.py .
+COPY ingestionMAD.py .
 
 RUN pip install --no-cache-dir -r requirements.txt
 

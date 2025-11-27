@@ -18,6 +18,8 @@ services:
       dockerfile: Dockerfile.pyIngestionMAD
     image: ingestion_datosMAD:latest
     env_file: .env
+    volumes: 
+      - ./datos_historicos/MAD:/app/datos_historicos/MAD
     depends_on:
       - db
     networks:
