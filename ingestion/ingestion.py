@@ -14,6 +14,7 @@ for i in range(10):
         break
     except Exception as e :
         print("Error conectando a la BD:", e)
+        time.sleep(2)
 
 
 data = requests.get('https://ciudadesabiertas.madrid.es/dynamicAPI/API/query/calair_tiemporeal.json?pageSize=5000')
@@ -21,20 +22,49 @@ data = data.json().get('records')
 
 def InsertarDatos(datos):
     #print(datos)
-    cur.execute("""INSERT INTO calidad_aire (municipio_id, estacion_id, magnitud_id, punto_muestreo, ANO, MES, DIA,
-                        H01, V01, H02, V02, H03, V03, H04, V04, H05, V05, H06, V06, H07, V07, H08, V08, H09, V09, H10, V10,
-                        H11, V11, H12, V12, H13, V13, H14, V14, H15, V15, H16, V16, H17, V17, H18, V18, H19, V19,
-                        H20, V20, H21, V21, H22, V22, H23, V23, H24, V24) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                """, (float(datos['MUNICIPIO']), float(datos['ESTACION']), float(datos['MAGNITUD']), datos['PUNTO_MUESTREO'], float(datos['ANO']), float(datos['MES']), float(datos['DIA']),
-                float(datos['H01']), datos['V01'], float(datos['H02']), datos['V02'], float(datos['H03']), datos['V03'], float(datos['H04']), datos['V04'], float(datos['H05']), datos['V05'], float(datos['H06']), datos['V06'],
-                float(datos['H07']), datos['V07'], float(datos['H08']), datos['V08'], float(datos['H09']), datos['V09'], float(datos['H10']), datos['V10'], float(datos['H11']), datos['V11'], float(datos['H12']), datos['V12'],
-                float(datos['H13']), datos['V13'], float(datos['H14']), datos['V14'], float(datos['H15']), datos['V15'], float(datos['H16']), datos['V16'], float(datos['H17']), datos['V17'], float(datos['H18']), datos['V18'],
-                float(datos['H19']), datos['V19'], float(datos['H20']), datos['V20'], float(datos['H21']), datos['V21'], float(datos['H22']), datos['V22'], float(datos['H23']), datos['V23'], float(datos['H24']), datos['V24']))
+    lista_inserciones = []
+
+    # Iteramos desde la hora 1 hasta la 24
+    for hora in range(1, 25):
+        # Creamos las claves dinámicamente: 
+        # Si hora es 1, genera "H01" y "V01". Si es 10, genera "H10" y "V10".
+        clave_valor = f"H{hora:02d}"      # f-string con padding de ceros
+        clave_validacion = f"V{hora:02d}"
+
+        # Extraemos los valores comunes
+        municipio = int(datos['MUNICIPIO'])
+        estacion = int(datos['ESTACION'])
+        magnitud = int(datos['MAGNITUD'])
+        punto = datos['PUNTO_MUESTREO']
+        ano = int(datos['ANO'])
+        mes = int(datos['MES'])
+        dia = int(datos['DIA'])
+
+        # Extraemos los valores específicos de esa hora
+        valor_hora = float(datos[clave_valor])
+        validacion_hora = datos[clave_validacion]
+
+        # Creamos la tupla para esta hora específica
+        fila = (
+            municipio, 
+            estacion, 
+            magnitud, 
+            punto, 
+            ano, 
+            mes, 
+            dia, 
+            hora,           # Aquí va el número de hora (1-24)
+            valor_hora,     # El valor de contaminación
+            validacion_hora # El código de validación (V/N)
+        )
+        
+        lista_inserciones.append(fila)
+    for i in lista_inserciones:
+        cur.execute("""INSERT INTO calidad_aire_madrid (MUNICIPIO, ESTACION, MAGNITUD, PUNTO_MUESTREO, ANO, MES, DIA, HORA, VALOR, VALIDACION) 
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", (i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8], i[9]))
     connection.commit()
 
 
-for i in data:
-    InsertarDatos(i)
+for datos in data:
+    InsertarDatos(datos)
 print("Datos insertados correctamente")
