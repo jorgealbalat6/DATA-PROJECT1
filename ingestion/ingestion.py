@@ -4,86 +4,87 @@ import io
 import os
 import time
 
-# 1. Configuración de URLs
-URL_MADRID_JSON = 'https://ciudadesabiertas.madrid.es/dynamicAPI/API/query/calair_tiemporeal.json?pageSize=5000'
-# La URL de tu API interna (el contenedor 'api')
+# Configuración
+URL_MADRID = 'https://ciudadesabiertas.madrid.es/dynamicAPI/API/query/calair_tiemporeal.json?pageSize=5000'
 INTERNAL_API_URL = os.getenv("API_URL", "http://api:5000") + "/ingest/calidad_aire"
 
-def obtener_datos_json():
-    print(f"📡 Consultando API Madrid: {URL_MADRID_JSON}...")
+def procesar_datos():
+    print("📡 Descargando datos de Madrid...")
     try:
-        response = requests.get(URL_MADRID_JSON)
-        response.raise_for_status()
-        
-        # Extraemos la lista de registros del JSON
-        data = response.json().get('records')
-        
-        if not data:
-            print("⚠️ La API de Madrid devolvió una lista vacía.")
-            return None
-            
-        print(f"✅ Descargados {len(data)} registros en JSON.")
-        return data
+        resp = requests.get(URL_MADRID)
+        data = resp.json().get('records')
     except Exception as e:
-        print(f"❌ Error descargando JSON: {e}")
-        return None
+        print(f"❌ Error descargando: {e}")
+        return
 
-def procesar_y_enviar(data_list):
-    try:
-        # 1. Convertir lista de diccionarios (JSON) a DataFrame de Pandas
-        df = pd.DataFrame(data_list)
+    print(f"🔄 Transformando {len(data)} registros (Wide -> Long)...")
+    
+    lista_inserciones = []
 
-        # 2. Renombrar columnas para que coincidan con la Base de Datos
-        #    (Mapeamos los nombres del JSON a los de tu tabla Postgres)
-        df = df.rename(columns={
-            "MUNICIPIO": "municipio_id",
-            "ESTACION": "estacion_id",
-            "MAGNITUD": "magnitud_id",
-            "PUNTO_MUESTREO": "punto_muestreo"
-            # ANO, MES, DIA, H01... ya suelen venir con el nombre correcto en el JSON
-        })
+    # --- TU LÓGICA DE TRANSFORMACIÓN (ADAPTADA) ---
+    for datos in data:
+        # Extraemos los valores comunes
+        try:
+            municipio = int(datos['MUNICIPIO'])
+            estacion = int(datos['ESTACION'])
+            magnitud = int(datos['MAGNITUD'])
+            punto = datos['PUNTO_MUESTREO']
+            ano = int(datos['ANO'])
+            mes = int(datos['MES'])
+            dia = int(datos['DIA'])
 
-        # 3. Asegurar el ORDEN de las columnas
-        #    El comando COPY de Postgres es posicional, así que el orden importa mucho.
-        columnas_ordenadas = [
-            'municipio_id', 'estacion_id', 'magnitud_id', 'punto_muestreo', 'ANO', 'MES', 'DIA',
-            'H01', 'V01', 'H02', 'V02', 'H03', 'V03', 'H04', 'V04', 'H05', 'V05', 'H06', 'V06',
-            'H07', 'V07', 'H08', 'V08', 'H09', 'V09', 'H10', 'V10', 'H11', 'V11', 'H12', 'V12',
-            'H13', 'V13', 'H14', 'V14', 'H15', 'V15', 'H16', 'V16', 'H17', 'V17', 'H18', 'V18',
-            'H19', 'V19', 'H20', 'V20', 'H21', 'V21', 'H22', 'V22', 'H23', 'V23', 'H24', 'V24'
-        ]
+            # Iteramos las 24 horas (Tu bucle)
+            for hora in range(1, 25):
+                clave_valor = f"H{hora:02d}"
+                clave_validacion = f"V{hora:02d}"
+
+                # Solo añadimos si existen las claves en el JSON
+                if clave_valor in datos:
+                    valor_hora = float(datos[clave_valor])
+                    validacion_hora = datos[clave_validacion]
+
+                    # Creamos la fila (Diccionario para Pandas)
+                    fila = {
+                        'municipio_id': municipio,
+                        'estacion_id': estacion,
+                        'magnitud_id': magnitud,
+                        'punto_muestreo': punto,
+                        'ano': ano,
+                        'mes': mes,
+                        'dia': dia,
+                        'hora': hora,
+                        'valor': valor_hora,
+                        'validacion': validacion_hora
+                    }
+                    lista_inserciones.append(fila)
+        except ValueError:
+            continue # Saltar filas con errores de datos
+
+    # --- ENVIAR A LA API ---
+    if lista_inserciones:
+        df = pd.DataFrame(lista_inserciones)
         
-        # Filtramos y reordenamos el DataFrame. Si falta alguna columna en el JSON, esto dará error (es bueno para detectar fallos)
-        df = df[columnas_ordenadas]
-
-        # 4. Convertir a CSV en memoria (Buffer)
+        # Buffer en memoria
         buffer = io.StringIO()
-        # header=False: No enviamos los nombres de columna, solo datos
-        # index=False: No enviamos el índice de filas de Pandas
-        df.to_csv(buffer, index=False, header=False, sep=',') 
+        # El orden aquí debe coincidir con el SQL de la API
+        columnas = ['municipio_id', 'estacion_id', 'magnitud_id', 'punto_muestreo', 
+                    'ano', 'mes', 'dia', 'hora', 'valor', 'validacion']
+        
+        df[columnas].to_csv(buffer, index=False, header=False)
         buffer.seek(0)
 
-        # 5. Enviar a tu API Interna
-        print(f"🚀 Enviando datos transformados a la API: {INTERNAL_API_URL}")
-        files = {'file': ('realtime_json.csv', buffer)}
-        
-        response = requests.post(INTERNAL_API_URL, files=files)
+        print(f"🚀 Enviando {len(df)} filas procesadas a la API...")
+        files = {'file': ('data.csv', buffer)}
+        res = requests.post(INTERNAL_API_URL, files=files)
 
-        if response.status_code == 201:
-            print("🎉 ¡ÉXITO! Datos insertados en la BD a través de la API.")
+        if res.status_code == 201:
+            print("✅ ¡ÉXITO! Datos insertados correctamente.")
         else:
-            print(f"⚠️ Error en la API Interna: {response.status_code} - {response.text}")
-
-    except KeyError as e:
-        print(f"❌ Error de formato: Falta la columna {e} en el JSON de Madrid.")
-    except Exception as e:
-        print(f"❌ Error procesando datos: {e}")
+            print(f"⚠️ Error API: {res.text}")
+    else:
+        print("⚠️ No se generaron datos para insertar.")
 
 if __name__ == "__main__":
-    # Espera inicial para asegurar que la API interna esté lista
-    print("⏳ Iniciando Ingestión Tiempo Real...")
-    time.sleep(5) 
-    
-    datos = obtener_datos_json()
-    if datos:
-        procesar_y_enviar(datos)
+    print("⏳ Esperando inicio de servicios...")
+    time.sleep(5)
+    procesar_datos()

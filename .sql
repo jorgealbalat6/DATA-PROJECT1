@@ -1,1 +1,1 @@
-SELECT * FROM calidad_aire;
+SELECT * FROM calidad_aire_madrid;
