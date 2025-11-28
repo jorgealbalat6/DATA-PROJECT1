@@ -34,6 +34,18 @@ services:
   #     - kafka-net
   #   tty: true
   #   restart: "no"
+  # plotly:
+  #   build:
+  #     context: ./plotly
+  #     dockerfile: Dockerfile.pyPlotly
+  #   image: plotly:latest
+  #   env_file: .env
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   networks:
+  #     - kafka-net
+  #   restart: "no"
   dbt:
     build:
       context: ./dbt
