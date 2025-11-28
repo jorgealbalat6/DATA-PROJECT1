@@ -52,7 +52,7 @@ services:
       - .env
     volumes:
       - ./docker-init:/docker-entrypoint-initdb.d
-      - ./postgresDB:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
@@ -141,5 +141,7 @@ services:
 networks:
   kafka-net:
     driver: bridge
+volumes:
+  postgres-data:
 
 
