@@ -1,70 +1,90 @@
-import os, psycopg, requests, time
+import requests
+import pandas as pd
+import io
+import os
+import time
 
-print('start')
+# Configuración
+URL_MADRID = 'https://ciudadesabiertas.madrid.es/dynamicAPI/API/query/calair_tiemporeal.json?pageSize=5000'
+INTERNAL_API_URL = os.getenv("API_URL", "http://api:5000") + "/ingest/calidad_aire"
 
-for i in range(10):
+def procesar_datos():
+    print("📡 Descargando datos de Madrid...")
     try:
-        #URL CONEXIÓN A BD 
-        url = os.getenv("DATABASE_URL")
-        #CONEXIÓN A BD
-        connection = psycopg.connect(url)
-        # Cursor
-        cur = connection.cursor()
-        print("BD conectada con éxito")
-        break
-    except Exception as e :
-        print("Error conectando a la BD:", e)
-        time.sleep(2)
+        resp = requests.get(URL_MADRID)
+        data = resp.json().get('records')
+    except Exception as e:
+        print(f"❌ Error descargando: {e}")
+        return
 
-
-data = requests.get('https://ciudadesabiertas.madrid.es/dynamicAPI/API/query/calair_tiemporeal.json?pageSize=5000')
-data = data.json().get('records')
-
-def InsertarDatos(datos):
-    #print(datos)
+    print(f"🔄 Transformando {len(data)} registros (Wide -> Long)...")
+    
     lista_inserciones = []
 
-    # Iteramos desde la hora 1 hasta la 24
-    for hora in range(1, 25):
-        # Creamos las claves dinámicamente: 
-        # Si hora es 1, genera "H01" y "V01". Si es 10, genera "H10" y "V10".
-        clave_valor = f"H{hora:02d}"      # f-string con padding de ceros
-        clave_validacion = f"V{hora:02d}"
-
+    # --- TU LÓGICA DE TRANSFORMACIÓN (ADAPTADA) ---
+    for datos in data:
         # Extraemos los valores comunes
-        municipio = int(datos['MUNICIPIO'])
-        estacion = int(datos['ESTACION'])
-        magnitud = int(datos['MAGNITUD'])
-        punto = datos['PUNTO_MUESTREO']
-        ano = int(datos['ANO'])
-        mes = int(datos['MES'])
-        dia = int(datos['DIA'])
+        try:
+            municipio = int(datos['MUNICIPIO'])
+            estacion = int(datos['ESTACION'])
+            magnitud = int(datos['MAGNITUD'])
+            punto = datos['PUNTO_MUESTREO']
+            ano = int(datos['ANO'])
+            mes = int(datos['MES'])
+            dia = int(datos['DIA'])
 
-        # Extraemos los valores específicos de esa hora
-        valor_hora = float(datos[clave_valor])
-        validacion_hora = datos[clave_validacion]
+            # Iteramos las 24 horas (Tu bucle)
+            for hora in range(1, 25):
+                clave_valor = f"H{hora:02d}"
+                clave_validacion = f"V{hora:02d}"
 
-        # Creamos la tupla para esta hora específica
-        fila = (
-            municipio, 
-            estacion, 
-            magnitud, 
-            punto, 
-            ano, 
-            mes, 
-            dia, 
-            hora,           # Aquí va el número de hora (1-24)
-            valor_hora,     # El valor de contaminación
-            validacion_hora # El código de validación (V/N)
-        )
+                # Solo añadimos si existen las claves en el JSON
+                if clave_valor in datos:
+                    valor_hora = float(datos[clave_valor])
+                    validacion_hora = datos[clave_validacion]
+
+                    # Creamos la fila (Diccionario para Pandas)
+                    fila = {
+                        'municipio_id': municipio,
+                        'estacion_id': estacion,
+                        'magnitud_id': magnitud,
+                        'punto_muestreo': punto,
+                        'ano': ano,
+                        'mes': mes,
+                        'dia': dia,
+                        'hora': hora,
+                        'valor': valor_hora,
+                        'validacion': validacion_hora
+                    }
+                    lista_inserciones.append(fila)
+        except ValueError:
+            continue # Saltar filas con errores de datos
+
+    # --- ENVIAR A LA API ---
+    if lista_inserciones:
+        df = pd.DataFrame(lista_inserciones)
         
-        lista_inserciones.append(fila)
-    for i in lista_inserciones:
-        cur.execute("""INSERT INTO calidad_aire_madrid (MUNICIPIO, ESTACION, MAGNITUD, PUNTO_MUESTREO, ANO, MES, DIA, HORA, VALOR, VALIDACION) 
-                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", (i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8], i[9]))
-    connection.commit()
+        # Buffer en memoria
+        buffer = io.StringIO()
+        # El orden aquí debe coincidir con el SQL de la API
+        columnas = ['municipio_id', 'estacion_id', 'magnitud_id', 'punto_muestreo', 
+                    'ano', 'mes', 'dia', 'hora', 'valor', 'validacion']
+        
+        df[columnas].to_csv(buffer, index=False, header=False)
+        buffer.seek(0)
 
+        print(f"🚀 Enviando {len(df)} filas procesadas a la API...")
+        files = {'file': ('data.csv', buffer)}
+        res = requests.post(INTERNAL_API_URL, files=files)
 
-for datos in data:
-    InsertarDatos(datos)
-print("Datos insertados correctamente")
+        if res.status_code == 201:
+            print("✅ ¡ÉXITO! Datos insertados correctamente.")
+        else:
+            print(f"⚠️ Error API: {res.text}")
+    else:
+        print("⚠️ No se generaron datos para insertar.")
+
+if __name__ == "__main__":
+    print("⏳ Esperando inicio de servicios...")
+    time.sleep(5)
+    procesar_datos()

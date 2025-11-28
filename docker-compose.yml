@@ -17,9 +17,8 @@ services:
       dockerfile: Dockerfile.pyIngestionMAD
     image: ingestion_datosmad:latest
     env_file: .env
-    depends_on:
-      db:
-        condition: service_healthy
+    environment:
+      - API_URL=http://api:5000
     networks:
       - kafka-net
     restart: "no"
@@ -87,11 +86,19 @@ services:
       - "2181:2181"                
     networks:
       - kafka-net
+    # Esto le permite a Docker saber cuándo Zookeeper está realmente escuchando
+    healthcheck:
+      test: echo srvr | nc localhost 2181 || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
   kafka:
     image: confluentinc/cp-kafka:7.3.0
     container_name: kafka
     depends_on:
-      - zookeeper
+    # Le dice a Kafka que espere a que Zookeeper esté "Healthy", no solo "Started"
+      zookeeper:
+        condition: service_healthy
     ports:
       - "9092:9092"               
     environment:
@@ -156,6 +163,21 @@ services:
     networks:
       - kafka-net
     restart: unless-stopped
+
+  api:
+    build: 
+      context: ./API  # Asumo que crearás una carpeta 'api'
+      dockerfile: Dockerfile.API
+    image: data-project-api
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/dataproject1db # La API sí necesita la BD
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - kafka-net
 networks:
   kafka-net:
     driver: bridge
