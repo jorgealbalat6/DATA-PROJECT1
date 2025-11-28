@@ -6,7 +6,8 @@ services:
     image: ingestion:latest
     env_file: .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - kafka-net
     restart: "no"
@@ -17,7 +18,8 @@ services:
     image: ingestion_datosmad:latest
     env_file: .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - kafka-net
     restart: "no"
@@ -39,7 +41,8 @@ services:
     image: dbt:latest
     env_file: .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - kafka-net
     tty: true
@@ -55,6 +58,11 @@ services:
       - "5432:5432"
     networks:
       - kafka-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
     restart: "no"
   
   zookeeper:
