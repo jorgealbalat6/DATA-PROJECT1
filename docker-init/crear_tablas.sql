@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS calidad_aire(
     id SERIAL PRIMARY KEY,
-    punto_muestreo VARCHAR(20),
     municipio_id INT, 
     estacion_id VARCHAR(10),     
     magnitud_id INT,
+    punto_muestreo VARCHAR(20),
     ANO INT,
     MES INT,
     DIA INT,        
