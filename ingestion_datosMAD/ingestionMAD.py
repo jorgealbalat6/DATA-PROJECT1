@@ -17,7 +17,7 @@ for i in range(10):
         print("Error conectando a la BD:", e)
 
 try: 
-    df = pd.read_csv("datos_historicos/MAD/CALIDAD_AIRE_HORARIOS20251013.csv")
+    df = pd.read_csv("CALIDAD_AIRE_HORARIOS20251013.csv")
     print("Se ha leido correctamente el csv")
 except Exception as e:
     print("Error:", e)
