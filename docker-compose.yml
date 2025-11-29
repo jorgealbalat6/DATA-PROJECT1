@@ -86,7 +86,6 @@ services:
       - "2181:2181"                
     networks:
       - kafka-net
-    # Esto le permite a Docker saber cuándo Zookeeper está realmente escuchando
     healthcheck:
       test: echo srvr | nc localhost 2181 || exit 1
       interval: 10s
@@ -96,7 +95,6 @@ services:
     image: confluentinc/cp-kafka:7.3.0
     container_name: kafka
     depends_on:
-    # Le dice a Kafka que espere a que Zookeeper esté "Healthy", no solo "Started"
       zookeeper:
         condition: service_healthy
     ports:
@@ -166,7 +164,7 @@ services:
 
   api:
     build: 
-      context: ./API  # Asumo que crearás una carpeta 'api'
+      context: ./API  
       dockerfile: Dockerfile.API
     image: data-project-api
     ports:

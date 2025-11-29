@@ -1,1 +1,0 @@
-SELECT * FROM calidad_aire_madrid;
