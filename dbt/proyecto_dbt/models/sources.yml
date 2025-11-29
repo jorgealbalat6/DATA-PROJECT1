@@ -1,0 +1,6 @@
+sources:
+  - name: aire_madrid
+    database: dataproject1db  # O el nombre de tu BD real
+    schema: raw
+    tables:
+      - name: calidad_aire_madrid # La tabla que crea el script de Python

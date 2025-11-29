@@ -1,3 +1,25 @@
 name: 'calidad_aire_dbt'
 version: '1.0.0'
 profile: 'calidad_aire_dbt'
+
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+models:
+  airbnb:
+    +materialized: view
+    staging:
+      +materialized: ephemeral  #como son las primeras capas y no las uso. Hace que no me ejecute cada vez que hago dbt run.
+
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table
+      # le pongo a la ultima generalmente table pq las otras no las uso tanto 
+      # xq hay una version mejor. asique uso la ultima como tabla pq es la mas 
+      # rapida de ver y mas si es la que voy a acceder
