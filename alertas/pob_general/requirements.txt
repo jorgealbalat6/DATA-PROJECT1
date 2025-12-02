@@ -1,4 +1,2 @@
 confluent_kafka
-time
-json
 psycopg[binary]==3.1.18

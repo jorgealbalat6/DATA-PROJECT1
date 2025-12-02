@@ -22,17 +22,28 @@ services:
     networks:
       - kafka-net
     restart: "no"
-  # alertas:
-  #   build:
-  #     context: ./alertas
-  #     dockerfile: Dockerfile.pyAlertas
-  #   image: alertas:latest
-  #   depends_on:
-  #     - kafka
-  #   networks:
-  #     - kafka-net
-  #   tty: true
-  #   restart: "no"
+  alertas_pob_general:
+    build:
+      context: ./alertas/pob_general
+      dockerfile: Dockerfile.pyAlertas
+    image: alertas_pob_general:latest
+    depends_on:
+      - kafka
+    networks:
+      - kafka-net
+    tty: true
+    restart: "no"
+  alertas_pob_riesgo:
+    build:
+      context: ./alertas/pob_riesgo
+      dockerfile: Dockerfile.pyAlertas
+    image: alertas_pob_riesgo:latest
+    depends_on:
+      - kafka
+    networks:
+      - kafka-net
+    tty: true
+    restart: "no"
   # plotly:
   #   build:
   #     context: ./plotly
@@ -70,20 +81,20 @@ services:
     networks:
       - kafka-net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER" ]
       interval: 2s
       timeout: 2s
       retries: 15
     restart: "no"
-  
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
     container_name: zookeeper
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181  
-      ZOOKEEPER_TICK_TIME: 2000    
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     ports:
-      - "2181:2181"                
+      - "2181:2181"
     networks:
       - kafka-net
     healthcheck:
@@ -98,7 +109,7 @@ services:
       zookeeper:
         condition: service_healthy
     ports:
-      - "9092:9092"               
+      - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -109,6 +120,11 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    healthcheck:
+      test: [ "CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
     networks:
       - kafka-net
   control-center:
@@ -117,7 +133,7 @@ services:
     depends_on:
       - kafka
     ports:
-      - "9021:9021"               
+      - "9021:9021"
     environment:
       CONTROL_CENTER_BOOTSTRAP_SERVERS: kafka:29092
       CONTROL_CENTER_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -128,28 +144,44 @@ services:
       PORT: 9021
     networks:
       - kafka-net
-  ksql:
-    image: confluentinc/cp-ksqldb-server:7.3.0
-    container_name: ksql
+
+  topico_alertas_pob_generales:
+    image: confluentinc/cp-kafka:7.3.0
     depends_on:
-      - kafka
-    ports:
-      - "8088:8088"              
-    environment:
-      KSQL_BOOTSTRAP_SERVERS: kafka:29092  
-      KSQL_LISTENERS: http://0.0.0.0:8088  
-      KSQL_KSQL_SERVICE_ID: ksql_service   
+      kafka:
+        condition: service_healthy
+    command: >
+      bash -c " kafka-topics --create --topic alertas_pob_generales --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists"
     networks:
       - kafka-net
-  ksql-cli:
-    image: confluentinc/cp-ksqldb-cli:7.3.0
-    container_name: ksql-cli
+  topico_alertas_pob_riesgo:
+    image: confluentinc/cp-kafka:7.3.0
     depends_on:
-      - ksql
-    entrypoint: /bin/sh   
-    tty: true             
+      kafka:
+        condition: service_healthy
+    command: >
+      bash -c " kafka-topics --create --topic alertas_pob_riesgo --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists"
     networks:
       - kafka-net
+  topico_datos_pob_general:
+    image: confluentinc/cp-kafka:7.3.0
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: >
+      bash -c " kafka-topics --create --topic datos_pob_general --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists"
+    networks:
+      - kafka-net
+  topico_datos_pob_riesgo:
+    image: confluentinc/cp-kafka:7.3.0
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: >
+      bash -c " kafka-topics --create --topic datos_pob_riesgo --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists"
+    networks:
+      - kafka-net
+
   pgadmin:
     container_name: pgadmim
     image: dpage/pgadmin4:latest
@@ -163,8 +195,8 @@ services:
     restart: unless-stopped
 
   api:
-    build: 
-      context: ./API  
+    build:
+      context: ./API
       dockerfile: Dockerfile.API
     image: data-project-api
     ports:

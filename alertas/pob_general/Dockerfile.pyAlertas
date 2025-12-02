@@ -7,4 +7,4 @@ COPY alertas.py .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["bash"]
+CMD ["python", "alertas.py"]
