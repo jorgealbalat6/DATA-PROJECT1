@@ -128,6 +128,56 @@ services:
       PORT: 9021
     networks:
       - kafka-net
+
+  topico_alertas_pob_generales:
+    image: confluentinc/cp-kafka:7.3.0
+    depends_on:
+      - kafka
+    command: >
+      bash -c "sleep 10 &&
+      kafka-topics --create
+        --topic alertas_pob_generales
+        --bootstrap-server kafka:29092
+        --partitions 1
+        --replication-factor 1
+        --if-not-exists"
+  topico_alertas_pob_riesgo:
+    image: confluentinc/cp-kafka:7.3.0
+    depends_on:
+      - kafka
+    command: >
+      bash -c "sleep 10 &&
+      kafka-topics --create
+        --topic alertas_pob_riesgo
+        --bootstrap-server kafka:29092
+        --partitions 1
+        --replication-factor 1
+        --if-not-exists"
+  topico_datos_pob_general:
+    image: confluentinc/cp-kafka:7.3.0
+    depends_on:
+      - kafka
+    command: >
+      bash -c "sleep 10 &&
+      kafka-topics --create
+        --topic datos_pob_general
+        --bootstrap-server kafka:29092
+        --partitions 1
+        --replication-factor 1
+        --if-not-exists"
+  topico_datos_pob_riesgo:
+    image: confluentinc/cp-kafka:7.3.0
+    depends_on:
+      - kafka
+    command: >
+      bash -c "sleep 10 &&
+      kafka-topics --create
+        --topic datos_pob_riesgo
+        --bootstrap-server kafka:29092
+        --partitions 1
+        --replication-factor 1
+        --if-not-exists"
+  
   ksql:
     image: confluentinc/cp-ksqldb-server:7.3.0
     container_name: ksql
