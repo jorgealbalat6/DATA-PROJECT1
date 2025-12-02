@@ -24,7 +24,7 @@ services:
     restart: "no"
   alertas_pob_general:
     build:
-      context: ./alertas/pob_general
+      context: ./productores/pob_general/alertas
       dockerfile: Dockerfile.pyAlertas
     image: alertas_pob_general:latest
     depends_on:
@@ -35,7 +35,7 @@ services:
     restart: "no"
   alertas_pob_riesgo:
     build:
-      context: ./alertas/pob_riesgo
+      context: ./productores/pob_riesgo/alertas
       dockerfile: Dockerfile.pyAlertas
     image: alertas_pob_riesgo:latest
     depends_on:
@@ -44,6 +44,29 @@ services:
       - kafka-net
     tty: true
     restart: "no"
+  datos_pob_general:
+    build:
+      context: ./productores/pob_general/datos
+      dockerfile: Dockerfile.pyDatos
+    image: datos_pob_general:latest
+    depends_on:
+      - kafka
+    networks:
+      - kafka-net
+    tty: true
+    restart: "no"
+  datos_pob_riesgo:
+    build:
+      context: ./productores/pob_riesgo/datos
+      dockerfile: Dockerfile.pyDatos
+    image: datos_pob_riesgo:latest
+    depends_on:
+      - kafka
+    networks:
+      - kafka-net
+    tty: true
+    restart: "no"
+
   # plotly:
   #   build:
   #     context: ./plotly
