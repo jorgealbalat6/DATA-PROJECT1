@@ -1,0 +1,2 @@
+confluent_kafka
+psycopg[binary]==3.1.18
