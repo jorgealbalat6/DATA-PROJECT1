@@ -4,3 +4,11 @@ sources:
     schema: raw
     tables:
       - name: calidad_aire_madrid # La tabla que crea el script de Python
+        description: "Datos de calidad del aire en Madrid obtenidos de la API pública"
+        config:
+          loaded_at_field: fecha_carga
+          freshness:
+          warn_after: {count: 2, period: hour} # Avísame si el dato tiene > 2 horas
+          error_after: {count: 10, period: hour} # Falla si tiene > 10 horas
+
+          

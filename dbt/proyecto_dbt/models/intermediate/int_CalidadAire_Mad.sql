@@ -1,8 +1,3 @@
-{{
-    config(
-        materialized = 'table'
-    )
-}}
 
 WITH stg_CalidadAire_Mad AS (
     SELECT * FROM {{ ref('stg_CalidadAire_Mad') }}
