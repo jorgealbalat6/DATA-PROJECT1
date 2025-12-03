@@ -2,9 +2,7 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY CALIDAD_AIRE_HORARIOS20251013.csv .
-COPY requirements.txt . 
-COPY ingestionMAD.py .
+COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
