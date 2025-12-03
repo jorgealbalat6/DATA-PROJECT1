@@ -224,7 +224,7 @@ services:
     image: data-project-api
     ports:
       - "5000:5000"
-    environment:
+    env_file:
       - .env
     depends_on:
       db:
