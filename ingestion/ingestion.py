@@ -6,8 +6,8 @@ import time
 
 URL_MADRID = 'https://ciudadesabiertas.madrid.es/dynamicAPI/API/query/calair_tiemporeal.json?pageSize=5000'
 INTERNAL_API_URL = os.getenv("API_URL", "http://api:5000") + "/ingest/calidad_aire"
-
-def procesar_datos():
+cont = 0
+def procesar_datos(cont):
     print("Descargando datos de Madrid...")
     try:
         resp = requests.get(URL_MADRID)
@@ -56,27 +56,53 @@ def procesar_datos():
 
     if lista_inserciones:
         df = pd.DataFrame(lista_inserciones)
+        df = df[(df['VALIDACION'] != 'N')]
+        if cont == 0:
+            buffer = io.StringIO()
 
-        buffer = io.StringIO()
+            columnas = ['MUNICIPIO', 'ESTACION', 'MAGNITUD', 'PUNTO_MUESTREO', 
+                        'ANO', 'MES', 'DIA', 'HORA', 'VALOR', 'VALIDACION']
+            
+            df[columnas].to_csv(buffer, index=False, header=False, encoding = 'utf-8')
+            buffer.seek(0)
 
-        columnas = ['MUNICIPIO', 'ESTACION', 'MAGNITUD', 'PUNTO_MUESTREO', 
-                    'ANO', 'MES', 'DIA', 'HORA', 'VALOR', 'VALIDACION']
-        
-        df[columnas].to_csv(buffer, index=False, header=False, encoding = 'utf-8')
-        buffer.seek(0)
+            print(f"Enviando {len(df)} filas procesadas a la API...")
+            files = {'file': ('data.csv', buffer)}
+            res = requests.post(INTERNAL_API_URL, files=files)
 
-        print(f"Enviando {len(df)} filas procesadas a la API...")
-        files = {'file': ('data.csv', buffer)}
-        res = requests.post(INTERNAL_API_URL, files=files)
-
-        if res.status_code == 201:
-            print("Datos insertados correctamente.")
+            if res.status_code == 201:
+                print("Datos insertados correctamente.")
+                cont += 1
+            else:
+                print(f"Error API: {res.text}")
         else:
-            print(f"Error API: {res.text}")
+            columnas_agrupacion = ['ESTACION', 'MAGNITUD', 'ANO', 'MES', 'DIA']
+            indices_ultima_hora = df.groupby(columnas_agrupacion)['HORA'].idxmax()
+            df = df.loc[indices_ultima_hora]
+            print(len(df))
+            buffer = io.StringIO()
+
+            columnas = ['MUNICIPIO', 'ESTACION', 'MAGNITUD', 'PUNTO_MUESTREO', 
+                        'ANO', 'MES', 'DIA', 'HORA', 'VALOR', 'VALIDACION']
+            
+            df[columnas].to_csv(buffer, index=False, header=False, encoding = 'utf-8')
+            buffer.seek(0)
+
+            print(f"Enviando {len(df)} filas procesadas a la API...")
+            files = {'file': ('data.csv', buffer)}
+            res = requests.post(INTERNAL_API_URL, files=files)
+
+            if res.status_code == 201:
+                print("Datos insertados correctamente.")
+                cont += 1
+            else:
+                print(f"Error API: {res.text}")
     else:
         print("No se generaron datos para insertar.")
+    return cont
 
 if __name__ == "__main__":
     print("Esperando inicio de servicios...")
-    time.sleep(1)
-    procesar_datos()
+    while True:
+        cont = procesar_datos(cont)
+        time.sleep(3900)

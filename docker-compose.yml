@@ -85,13 +85,16 @@ services:
       dockerfile: Dockerfile.pyDBT
     image: dbt:latest
     env_file: .env
+    volumes:
+      - ./dbt/ejecutar.sh:/ejecutar.sh 
+    entrypoint: ["/bin/bash", "/ejecutar.sh"]
     depends_on:
       db:
         condition: service_healthy
     networks:
       - kafka-net
-    tty: true
-    restart: "no"
+    #tty: true
+    restart: unless-stopped
   db:
     image: postgres:17-alpine
     env_file:
