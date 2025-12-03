@@ -5,9 +5,19 @@ import io
 
 app = Flask(__name__)
 
-def get_db_connection():
-    url = os.getenv("DATABASE_URL")
-    return psycopg.connect(url)
+for i in range(10):
+    try:
+        #URL CONEXIÓN A BD 
+        url = os.getenv("DATABASE_URL")
+        #CONEXIÓN A BD
+        connection = psycopg.connect(url)
+        # Cursor
+        cur = connection.cursor()
+        print("BD conectada con éxito")
+        break
+    except Exception as e :
+        print("Error conectando a la BD:", e)
+        time.sleep(2)
 
 @app.route('/ingest/calidad_aire', methods=['POST'])
 def ingest_data():
@@ -19,31 +29,27 @@ def ingest_data():
         return jsonify({'error': 'No selected file'}), 400
 
     try:
-        # Decodificamos
-        stream = io.StringIO(file.stream.read().decode("utf-8-sig"), newline=None)
+        stream = io.StringIO(file.stream.read().decode('utf-8'), newline=None)
         
-        with get_db_connection() as conn:
-            with conn.cursor() as cur:
-                # --- CAMBIO: Usamos los nombres que TU tabla ya tiene (sin _id) ---
-                sql = """
-                COPY calidad_aire_madrid (
-                    MUNICIPIO, 
-                    ESTACION, 
-                    MAGNITUD, 
-                    PUNTO_MUESTREO, 
-                    ANO, 
-                    MES, 
-                    DIA, 
-                    HORA, 
-                    VALOR, 
-                    VALIDACION
-                )
-                FROM STDIN
-                WITH (FORMAT CSV)
-                """
-                with cur.copy(sql) as copy:
-                    copy.write(stream.getvalue())
-            conn.commit()
+        sql = """
+        COPY calidad_aire_madrid (
+            MUNICIPIO, 
+            ESTACION, 
+            MAGNITUD, 
+            PUNTO_MUESTREO, 
+            ANO, 
+            MES, 
+            DIA, 
+            HORA, 
+            VALOR, 
+            VALIDACION
+        )
+        FROM STDIN
+        WITH (FORMAT CSV)
+        """
+        with cur.copy(sql) as copy:
+            copy.write(stream.getvalue())
+        connection.commit()
 
         return jsonify({'message': 'Datos ingestados correctamente'}), 201
 
