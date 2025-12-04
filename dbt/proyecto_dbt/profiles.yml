@@ -8,7 +8,7 @@ calidad_aire_dbt:
       password: "{{ env_var('POSTGRES_PASSWORD') }}"
       port: "{{ env_var('POSTGRES_PORT') | int }}"
       dbname: "{{ env_var('POSTGRES_DB') }}"
-      schema: "{{ env_var('PG_SCHEMA') }}"
+      schema: "{{ env_var('POSTGRES_SCHEMA') }}"
       threads: 4
       keepalives_idle: 0
       connect_timeout: 20

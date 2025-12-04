@@ -11,7 +11,7 @@ macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
 models:
-  airbnb:
+  calidad_aire_dbt:
     +materialized: view
     staging:
       +materialized: ephemeral  #como son las primeras capas y no las uso. Hace que no me ejecute cada vez que hago dbt run.
