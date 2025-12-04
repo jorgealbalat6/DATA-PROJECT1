@@ -85,9 +85,6 @@ services:
       dockerfile: Dockerfile.pyDBT
     image: dbt:latest
     env_file: .env
-    volumes:
-      - ./dbt/ejecutar.sh:/ejecutar.sh 
-    entrypoint: ["/bin/bash", "/ejecutar.sh"]
     depends_on:
       db:
         condition: service_healthy
