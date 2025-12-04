@@ -25,7 +25,7 @@ services:
   alertas_pob_general:
     build:
       context: ./productores/pob_general/alertas
-      dockerfile: Dockerfile.pyAlertas
+      dockerfile: Dockerfile.pyAlertasG
     image: alertas_pob_general:latest
     depends_on:
       - kafka
@@ -36,7 +36,7 @@ services:
   alertas_pob_riesgo:
     build:
       context: ./productores/pob_riesgo/alertas
-      dockerfile: Dockerfile.pyAlertas
+      dockerfile: Dockerfile.pyAlertasR
     image: alertas_pob_riesgo:latest
     depends_on:
       - kafka
@@ -47,7 +47,7 @@ services:
   datos_pob_general:
     build:
       context: ./productores/pob_general/datos
-      dockerfile: Dockerfile.pyDatos
+      dockerfile: Dockerfile.pyDatosG
     image: datos_pob_general:latest
     depends_on:
       - kafka
@@ -58,7 +58,7 @@ services:
   datos_pob_riesgo:
     build:
       context: ./productores/pob_riesgo/datos
-      dockerfile: Dockerfile.pyDatos
+      dockerfile: Dockerfile.pyDatosR
     image: datos_pob_riesgo:latest
     depends_on:
       - kafka
@@ -67,18 +67,30 @@ services:
     tty: true
     restart: "no"
 
-  # plotly:
-  #   build:
-  #     context: ./plotly
-  #     dockerfile: Dockerfile.pyPlotly
-  #   image: plotly:latest
-  #   env_file: .env
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #   networks:
-  #     - kafka-net
-  #   restart: "no"
+  dashboard_pob_general:
+    build:
+      context: ./dashboard_alertas/pob_general
+      dockerfile: Dockerfile.pyDashG
+    image: dashboard_pob_general:latest
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - kafka-net
+    restart: "no"
+  dashboard_pob_riesgo:
+    build:
+      context: ./dashboard_alertas/pob_riesgo
+      dockerfile: Dockerfile.pyDashR
+    image: dashboard_pob_riesgo:latest
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - kafka-net
+    restart: "no"
   dbt:
     build:
       context: ./dbt
