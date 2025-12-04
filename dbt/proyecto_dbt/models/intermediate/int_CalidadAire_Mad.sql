@@ -1,14 +1,17 @@
-
 WITH stg_CalidadAire_Mad AS (
     SELECT * FROM {{ ref('stg_CalidadAire_Mad') }}
 )
 
 SELECT
     id,
-    CASE 
+    CASE
         WHEN codigo_municipio = 79 THEN 'Madrid'
-        ELSE concat('Municipio ', codigo_municipio)
+        ELSE concat(
+            'Municipio ',
+            codigo_municipio
+        )
     END AS municipio,
+    MAGNITUD as magnitud,
     CASE
         WHEN codigo_estacion = '4' THEN 'Pza. de España'
         WHEN codigo_estacion = '8' THEN 'Escuelas Aguirre'
@@ -36,7 +39,7 @@ SELECT
         WHEN codigo_estacion = '60' THEN 'Tres Olivos'
         ELSE concat('Estación ', codigo_estacion)
     END AS estacion,
-    CASE 
+    CASE
         WHEN MAGNITUD = 1 THEN 'Dióxido de Azufre (SO2)'
         WHEN MAGNITUD = 6 THEN 'Monóxido de Carbono (CO)'
         WHEN MAGNITUD = 7 THEN 'Monóxido de Nitrógeno (NO)'
@@ -56,20 +59,19 @@ SELECT
         WHEN MAGNITUD = 44 THEN 'Hidrocarburos no metánicos'
         WHEN MAGNITUD = 431 THEN 'Metaparaxileno'
         ELSE concat('Magnitud ', MAGNITUD)
-        END AS indicador_contaminante,
+    END AS indicador_contaminante,
     punto_muestreo,
 
-        -- FECHA UNIFICADA (Año + Mes + Día + Hora)
-        -- make_date une la fecha. make_interval suma las horas.
-        -- Restamos 1 a la hora porque SQL cuenta 0-23 y la API 1-24.
-    
-    (make_date(ANO, MES, DIA) + make_interval(hours => HORA - 1)) AS fecha_hora,
-    
-    valor,
+-- FECHA UNIFICADA (Año + Mes + Día + Hora)
+-- make_date une la fecha. make_interval suma las horas.
+-- Restamos 1 a la hora porque SQL cuenta 0-23 y la API 1-24.
 
-    CASE 
-        WHEN datos_disponibles = 'V' THEN true 
-        ELSE false 
-    END AS datos_disponibles
-
+(
+    make_date(ANO, MES, DIA) + make_interval(hours => HORA - 1)
+) AS fecha_hora,
+valor,
+CASE
+    WHEN datos_disponibles = 'V' THEN true
+    ELSE false
+END AS datos_disponibles
 FROM stg_CalidadAire_Mad
