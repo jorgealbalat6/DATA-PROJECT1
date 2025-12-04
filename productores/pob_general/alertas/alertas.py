@@ -7,8 +7,8 @@ import psycopg
 config = {
     'bootstrap.servers': 'kafka:9092',
 }
-producer = Producer(config)
-topic = "alertas_pob_general"
+productor = Producer(config)
+topico = "alertas_pob_general"
 
 DB_URL = os.getenv("DATABASE_URL")
 
@@ -29,7 +29,7 @@ while True:
                 if ultima_fecha_procesada is None:
                     query = """
                         SELECT municipio, estacion, indicador_contaminante, fecha_hora, valor 
-                        FROM "int_CalidadAire_Mad"
+                        FROM "marts_CalidadAire_Mad"
                         WHERE fecha_hora > NOW() - INTERVAL '1 hour'
                         AND datos_disponibles = true
                     """
@@ -37,7 +37,7 @@ while True:
                 else:
                     query = """
                         SELECT municipio, estacion, indicador_contaminante, fecha_hora, valor 
-                        FROM "int_CalidadAire_Mad"
+                        FROM "marts_CalidadAire_Mad"
                         WHERE fecha_hora > %s
                         AND datos_disponibles = true
                     """
@@ -71,13 +71,13 @@ while True:
                             "valor": valor,
                             "texto_alerta": texto_alerta
                         }
-                        producer.produce(
-                            topic,
+                        productor.produce(
+                            topico,
                             value=json.dumps(mensaje).encode("utf-8")
                         )
                         print("Alerta enviada:", texto_alerta)
                 
-                producer.flush()
+                productor.flush()
         
     except Exception as e:
         print(f"⚠️ Error en el proceso (reintentando en 5s): {e}")

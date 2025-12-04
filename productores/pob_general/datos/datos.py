@@ -25,7 +25,7 @@ while True:
                 if ultima_fecha_procesada is None:
                     query = """
                         SELECT municipio, estacion, indicador_contaminante, fecha_hora, valor 
-                        FROM "int_CalidadAire_Mad"
+                        FROM "marts_CalidadAire_Mad"
                         WHERE fecha_hora > NOW() - INTERVAL '1 hour'
                         AND datos_disponibles = true
                     """
@@ -33,7 +33,7 @@ while True:
                 else:
                     query = """
                         SELECT municipio, estacion, indicador_contaminante, fecha_hora, valor 
-                        FROM "int_CalidadAire_Mad"
+                        FROM "marts_CalidadAire_Mad"
                         WHERE fecha_hora > %s
                         AND datos_disponibles = true
                     """
