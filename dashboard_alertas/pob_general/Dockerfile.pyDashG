@@ -3,8 +3,8 @@ FROM python:3.12-slim
 WORKDIR /app
 
 COPY requirements.txt . 
-COPY plotly.py .
+COPY dashboard_pob_general.py .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["python", "plotly.py"]
+CMD ["python", "dashboard_pob_general.py"]
