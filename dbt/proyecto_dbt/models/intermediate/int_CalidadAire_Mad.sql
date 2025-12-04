@@ -40,14 +40,14 @@ SELECT
         ELSE concat('Estación ', codigo_estacion)
     END AS estacion,
     CASE
-        WHEN MAGNITUD = 1 THEN 'Dióxido de Azufre (SO2)'
-        WHEN MAGNITUD = 6 THEN 'Monóxido de Carbono (CO)'
-        WHEN MAGNITUD = 7 THEN 'Monóxido de Nitrógeno (NO)'
-        WHEN MAGNITUD = 8 THEN 'Dióxido de Nitrógeno (NO2)'
-        WHEN MAGNITUD = 9 THEN 'Partículas < 2.5 µm (PM2.5)'
-        WHEN MAGNITUD = 10 THEN 'Partículas < 10 µm (PM10)'
-        WHEN MAGNITUD = 12 THEN 'Óxidos de Nitrógeno (NOx)'
-        WHEN MAGNITUD = 14 THEN 'Ozono (O3)'
+        WHEN MAGNITUD = 1 THEN 'SO2'
+        WHEN MAGNITUD = 6 THEN 'CO'
+        WHEN MAGNITUD = 7 THEN 'NO'
+        WHEN MAGNITUD = 8 THEN 'NO2'
+        WHEN MAGNITUD = 9 THEN 'PM2.5'
+        WHEN MAGNITUD = 10 THEN 'PM10'
+        WHEN MAGNITUD = 12 THEN 'NOx'
+        WHEN MAGNITUD = 14 THEN 'O3'
         WHEN MAGNITUD = 20 THEN 'Tolueno'
         WHEN MAGNITUD = 30 THEN 'Benceno'
         WHEN MAGNITUD = 35 THEN 'Etilbenceno'
@@ -59,7 +59,7 @@ SELECT
         WHEN MAGNITUD = 44 THEN 'Hidrocarburos no metánicos'
         WHEN MAGNITUD = 431 THEN 'Metaparaxileno'
         ELSE concat('Magnitud ', MAGNITUD)
-    END AS indicador_contaminante,
+    END AS indicador,
     punto_muestreo,
 
 -- FECHA UNIFICADA (Año + Mes + Día + Hora)
@@ -68,7 +68,7 @@ SELECT
 
 (
     make_date(ANO, MES, DIA) + make_interval(hours => HORA - 1)
-) AS fecha_hora,
+) AS fecha,
 valor,
 CASE
     WHEN datos_disponibles = 'V' THEN true
