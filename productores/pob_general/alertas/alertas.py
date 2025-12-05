@@ -3,6 +3,7 @@ import json
 import time
 import os
 import psycopg
+from sqlalchemy import create_engine, text
 
 config = {
     'bootstrap.servers': 'kafka:9092',
@@ -10,7 +11,7 @@ config = {
 productor = Producer(config)
 topico = "alertas_pob_general"
 
-DB_URL = os.getenv("DATABASE_URL")
+url = os.getenv("DATABASE_URL")
 
 LIMITES = {
     "Dióxido de Nitrógeno (NO2)": 400,
@@ -20,66 +21,28 @@ LIMITES = {
     "Dióxido de Azufre (SO2)": 500
 }
 
-ultima_fecha_procesada = None # Se pone esto, para que cada vez que entre en el bucle, no procese todos los datos, sino solo los nuevos
-
-while True:
-    try:
-        with psycopg.connect(DB_URL) as conn:
-            with conn.cursor() as cur:
-                if ultima_fecha_procesada is None:
-                    query = """
-                        SELECT municipio, estacion, indicador_contaminante, fecha_hora, valor 
-                        FROM "marts_CalidadAire_Mad"
-                        WHERE fecha_hora > NOW() - INTERVAL '1 hour'
-                        AND datos_disponibles = true
-                    """
-                    cur.execute(query)
-                else:
-                    query = """
-                        SELECT municipio, estacion, indicador_contaminante, fecha_hora, valor 
-                        FROM "marts_CalidadAire_Mad"
-                        WHERE fecha_hora > %s
-                        AND datos_disponibles = true
-                    """
-                    cur.execute(query, (ultima_fecha_procesada,))
-
-                datos = cur.fetchall()
-                
-                for fila in datos: 
-                    municipio = fila[0]   
-                    estacion = fila[1]    
-                    contaminante = fila[2]
-                    fecha_obj = fila[3] 
-                    fecha_str = str(fecha_obj)
-                    valor = fila[4]   
-
-                    if ultima_fecha_procesada is None or fecha_obj > ultima_fecha_procesada:
-                        ultima_fecha_procesada = fecha_obj
-
-                    if valor is None: continue
-                    
-                    if contaminante in LIMITES and valor > LIMITES[contaminante]:
-                        texto_alerta = (f"Alerta de contaminación en {municipio} "
-                                        f"({estacion}) el {fecha_str}: "
-                                        f"{contaminante} = {valor} µg/m³, "
-                                        f"superando el límite de {LIMITES[contaminante]} µg/m³.")
-                        mensaje = {
-                            "municipio": municipio,
-                            "estacion": estacion,
-                            "contaminante": contaminante,
-                            "fecha": fecha_str,
-                            "valor": valor,
-                            "texto_alerta": texto_alerta
-                        }
-                        productor.produce(
-                            topico,
-                            value=json.dumps(mensaje).encode("utf-8")
-                        )
-                        print("Alerta enviada:", texto_alerta)
-                
-                productor.flush()
-        
+def guardar_ultima_fecha_procesada():
+    try: 
+        connection = psycopg.connect(url)
+        cur = connection.cursor()
+        cur.execute("""SELECT MAX(fecha) FROM "marts_CalidadAire_Mad";""") 
+        dato = cur.fetchone()
+        if dato:
+            fecha = dato[0]
+            with open("ultima_fecha.txt", "w") as f:
+                f.write(str(fecha))
+            print(f"Fecha guardada: {fecha}")
     except Exception as e:
-        print(f"⚠️ Error en el proceso (reintentando en 5s): {e}")
-    
-    time.sleep(5)
+        print(f"Error: {e}")
+
+
+def obtener_ultima_fecha_procesada():
+    try:
+        with open("ultima_fecha.txt", "r") as f:
+            fecha = f.read()
+        return fecha
+    except FileNotFoundError:
+        return None
+
+if __name__ == '__main__':
+    guardar_ultima_fecha_procesada()

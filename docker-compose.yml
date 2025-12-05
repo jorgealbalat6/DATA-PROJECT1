@@ -27,6 +27,7 @@ services:
       context: ./productores/pob_general/alertas
       dockerfile: Dockerfile.pyAlertasG
     image: alertas_pob_general:latest
+    env_file: .env
     depends_on:
       - kafka
     networks:
@@ -38,6 +39,7 @@ services:
       context: ./productores/pob_riesgo/alertas
       dockerfile: Dockerfile.pyAlertasR
     image: alertas_pob_riesgo:latest
+    env_file: .env
     depends_on:
       - kafka
     networks:
@@ -49,6 +51,7 @@ services:
       context: ./productores/pob_general/datos
       dockerfile: Dockerfile.pyDatosG
     image: datos_pob_general:latest
+    env_file: .env
     depends_on:
       - kafka
     networks:
@@ -60,6 +63,7 @@ services:
       context: ./productores/pob_riesgo/datos
       dockerfile: Dockerfile.pyDatosR
     image: datos_pob_riesgo:latest
+    env_file: .env
     depends_on:
       - kafka
     networks:
