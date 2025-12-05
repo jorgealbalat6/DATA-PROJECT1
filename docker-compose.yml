@@ -247,6 +247,23 @@ services:
         condition: service_healthy
     networks:
       - kafka-net
+  
+  analisis_historico:
+    build:
+      context: ./analisis_historico
+      dockerfile: Dockerfile.pyAnalisis
+    image: analisis_historico:latest
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./analisis_historico:/app
+    networks:
+      - kafka-net
+    tty: true
+    restart: "no"
+
 networks:
   kafka-net:
     driver: bridge
