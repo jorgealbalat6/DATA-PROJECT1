@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS calidad_aire_madrid (
+CREATE TABLE IF NOT EXISTS calidad_aire (
     id SERIAL PRIMARY KEY,
     MUNICIPIO INT, 
     ESTACION VARCHAR(10),     

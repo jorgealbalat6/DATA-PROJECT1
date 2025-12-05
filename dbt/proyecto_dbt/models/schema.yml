@@ -1,10 +1,10 @@
 models:
   # 1. MODELO STAGING (Limpieza)
-  - name: stg_CalidadAire_Mad
+  - name: stg_CalidadAire
     description: "Limpieza básica y renombramiento de columnas"
 
   # 2. MODELO INTERMEDIATE 
-  - name: int_CalidadAire_Mad
+  - name: int_CalidadAire
     description: "Tabla enriquecida con nombres reales y no solo codigos, fechas unificadas"
     columns:
       - name: id
@@ -22,5 +22,26 @@ models:
         description: "Fecha y hora exacta de la medición"
         tests:
           - not_null
+      - name: datos_disponibles
+        description: "Booleano: True si el dato esta disponible según la API"
+  # 3. MODELO MART (Modelo final para análisis)
+  - name: mart_CalidadAire
+    description: "Modelo final optimizado para análisis y reporting"
+    columns:
+      - name: id
+        description: "Clave primaria"
+        tests:
+          - unique
+          - not_null
+      - name: municipio
+        description: "Nombre del municipio (Madrid)"
+      - name: indicador_contaminante
+        description: "Tipo de contaminante (NO2, PM2.5, etc)"
+      - name: fecha_hora
+        description: "Fecha y hora exacta de la medición"
+        tests:
+          - not_null
+      - name: valor
+        description: "Valor medido del contaminante"
       - name: datos_disponibles
         description: "Booleano: True si el dato esta disponible según la API"

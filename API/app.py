@@ -33,7 +33,7 @@ def ingest_data():
         stream = io.StringIO(file.stream.read().decode('utf-8'), newline=None)
         
         sql = """
-        COPY calidad_aire_madrid (
+        COPY calidad_aire (
             MUNICIPIO, 
             ESTACION, 
             MAGNITUD, 
