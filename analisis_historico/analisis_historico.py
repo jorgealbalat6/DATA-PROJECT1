@@ -33,5 +33,10 @@ df = spark.read \
     .option("driver", "org.postgresql.Driver") \
     .load()
 
-df.printSchema()
-df.show(5)
+df_pm25 = df.filter(df["magnitud"] == 9)
+df_pm10 = df.filter(df["magnitud"] == 10)
+df_no2 = df.filter(df["magnitud"] == 8)
+df_o3 = df.filter(df["magnitud"] == 14)
+df_so2 = df.filter(df["magnitud"] == 1)
+df_co = df.filter(df["magnitud"] == 6)
+
