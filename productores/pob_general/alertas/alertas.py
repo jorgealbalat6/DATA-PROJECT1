@@ -14,14 +14,6 @@ topico = "alertas_pob_general"
 
 url = os.getenv("DATABASE_URL")
 
-LIMITES = {
-    "Dióxido de Nitrógeno (NO2)": 400,
-    "Partículas < 2.5 µm (PM2.5)": 50,
-    "Partículas < 10 µm (PM10)": 80,
-    "Ozono (O3)": 240,
-    "Dióxido de Azufre (SO2)": 500
-}
-
 def obtener_ultima_fecha_local():
     if not os.path.exists("ultima_fecha.txt"):
         return None
@@ -56,7 +48,7 @@ def procesar_alertas():
             return
         with psycopg.connect(url) as connection:
             with connection.cursor() as cur:
-                cur.execute('SELECT MAX(fecha) FROM "marts_CalidadAire" LIMIT 1')
+                cur.execute('SELECT MAX(fecha) FROM "marts_CalidadAire_general" LIMIT 1')
                 res = cur.fetchone()
                 if not res or res[0] is None:
                     print("No se encontraron fechas en la base de datos.")
@@ -67,7 +59,7 @@ def procesar_alertas():
                 print(f"Última fecha local: {fecha_local}")
                 if fecha_local is None or str(fecha_db) > fecha_local:
                     print(f"Nueva fecha detectada: {fecha_db}. Procesando alertas...")
-                    cur.execute('SELECT * FROM "marts_CalidadAire" WHERE fecha = %s', (fecha_db,))
+                    cur.execute('SELECT * FROM "marts_CalidadAire_general" WHERE fecha = %s', (fecha_db,))
                     registros = cur.fetchall()
                     col_names = [desc[0] for desc in cur.description]
                     alertas_enviadas = 0
@@ -117,4 +109,5 @@ if __name__ == '__main__':
     while True:
         procesar_alertas()
         time.sleep(60)
+
 
