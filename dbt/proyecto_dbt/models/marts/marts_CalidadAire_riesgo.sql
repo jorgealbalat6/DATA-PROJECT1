@@ -1,7 +1,7 @@
 WITH calidad_aire AS (
     SELECT * FROM {{ ref('int_CalidadAire') }}
 )
-SELECT * 
+SELECT id, municipio, magnitud, estacion, indicador, fecha, valor, datos_disponibles 
 FROM calidad_aire
 WHERE 
     magnitud IN (1, 6, 7, 8, 9, 10, 12, 14)
