@@ -1,5 +1,5 @@
-WITH calidad_aire_madrid AS(
-SELECT * FROM {{ source('aire_madrid', 'calidad_aire_madrid')}}
+WITH calidad_aire AS(
+SELECT * FROM {{ source('aire', 'calidad_aire')}}
 )
 
 SELECT
@@ -14,4 +14,4 @@ SELECT
     HORA,
     VALOR AS valor,
     VALIDACION AS datos_disponibles
-FROM calidad_aire_madrid
+FROM calidad_aire

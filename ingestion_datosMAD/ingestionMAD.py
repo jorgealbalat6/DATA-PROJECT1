@@ -271,7 +271,7 @@ try:
     buffer.seek(0)
     
     sql = """
-    COPY calidad_aire_madrid (
+    COPY calidad_aire (
         MUNICIPIO, ESTACION, MAGNITUD, PUNTO_MUESTREO, 
         ANO, MES, DIA, HORA, VALOR, VALIDACION
     )

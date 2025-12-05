@@ -1,5 +1,5 @@
-WITH stg_CalidadAire_Mad AS (
-    SELECT * FROM {{ ref('stg_CalidadAire_Mad') }}
+WITH stg_CalidadAire AS (
+    SELECT * FROM {{ ref('stg_CalidadAire') }}
 )
 
 SELECT
@@ -74,4 +74,4 @@ CASE
     WHEN datos_disponibles = 'V' THEN true
     ELSE false
 END AS datos_disponibles
-FROM stg_CalidadAire_Mad
+FROM stg_CalidadAire
