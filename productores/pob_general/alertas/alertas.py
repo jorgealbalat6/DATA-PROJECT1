@@ -4,6 +4,7 @@ import time
 import os
 import psycopg
 from datetime import datetime, date
+from decimal import Decimal
 
 config = {
     'bootstrap.servers': 'kafka:29092',
@@ -55,7 +56,7 @@ def procesar_alertas():
             return
         with psycopg.connect(url) as connection:
             with connection.cursor() as cur:
-                cur.execute('SELECT MAX(fecha) FROM "marts_CalidadAire"')
+                cur.execute('SELECT MAX(fecha) FROM "marts_CalidadAire" LIMIT 1')
                 res = cur.fetchone()
                 if not res or res[0] is None:
                     print("No se encontraron fechas en la base de datos.")
@@ -70,13 +71,15 @@ def procesar_alertas():
                     registros = cur.fetchall()
                     col_names = [desc[0] for desc in cur.description]
                     alertas_enviadas = 0
-                    for row in registros:
-                        data = dict(zip(col_names, row))
+                    for fila in registros:
+                        data = dict(zip(col_names, fila))
                         magnitud = data.get('magnitud')
                         valor = data.get('valor')
                         if magnitud in LIMITES and valor is not None:
                             limite = LIMITES[magnitud]
                             if valor > limite:
+                                if isinstance(valor, Decimal):
+                                    valor = float(valor)
                                 alerta = {
                                     "fecha": str(fecha_db),
                                     "estacion": data.get('estacion'),
@@ -91,7 +94,7 @@ def procesar_alertas():
                                     topico, 
                                     key=str(data.get('id', 'key')),
                                     value=json.dumps(alerta), 
-                                    callback=delivery_report
+                                    callback=estado_envio
                                 )
                                 alertas_enviadas += 1
                     
@@ -115,12 +118,3 @@ if __name__ == '__main__':
         procesar_alertas()
         time.sleep(60)
 
-
-# El mensaje que enviará el productor en caso de que salte una alerta es el siguiente:
-# fecha = fecha de la alerta
-# estacion = estacion de la alerta
-# municipio = municipio de la alerta
-# magnitud = magnitud de la alerta
-# valor = valor de la alerta
-# limite = limite de la alerta
-# mensaje = mensaje de la alerta
