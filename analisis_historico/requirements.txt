@@ -4,3 +4,4 @@ matplotlib
 jupyter
 nbconvert
 ipykernel
+psycopg[binary]==3.1.18
