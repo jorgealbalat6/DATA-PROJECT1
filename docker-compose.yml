@@ -108,7 +108,6 @@ services:
         condition: service_healthy
     networks:
       - kafka-net
-    #tty: true
     restart: unless-stopped
   db:
     image: postgres:17-alpine
@@ -249,19 +248,20 @@ services:
         condition: service_healthy
     networks:
       - kafka-net
-  
+
   analisis_historico:
     build:
       context: ./analisis_historico
       dockerfile: Dockerfile.pyAnalisis
     image: analisis_historico:latest
     env_file: .env
+    volumes:
+      - ./analisis_historico:/app
     depends_on:
       db:
         condition: service_healthy
     networks:
       - kafka-net
-    tty: true
     restart: "no"
 
 networks:
