@@ -4,7 +4,7 @@ sources:
     schema: public
     tables:
       - name: calidad_aire
-        description: "Datos de calidad del aire en Madrid obtenidos de la API pública"
+        description: "Datos de calidad del aireobtenidos de la API pública"
         config:
           loaded_at_field: fecha_carga
           freshness:

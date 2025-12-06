@@ -95,7 +95,7 @@ SELECT
         WHEN ca.MAGNITUD = '43' THEN 'Metano (CH4)'
         WHEN ca.MAGNITUD = '44' THEN 'Hidrocarburos no metánicos'
         WHEN ca.MAGNITUD = '431' THEN 'Metaparaxileno'
-        ELSE concat('Magnitud ', ca.MAGNITUD)
+        ELSE concat('', ca.MAGNITUD)
     END AS indicador,
 
     ca.punto_muestreo,
