@@ -1,2 +1,6 @@
 psycopg[binary]==3.1.18
 plotly
+streamlit
+confluent-kafka
+pandas
+sqlalchemy
