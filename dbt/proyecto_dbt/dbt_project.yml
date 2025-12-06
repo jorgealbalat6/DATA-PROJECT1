@@ -14,8 +14,7 @@ models:
   calidad_aire_dbt:
     +materialized: view
     staging:
-      +materialized: ephemeral  #como son las primeras capas y no las uso. Hace que no me ejecute cada vez que hago dbt run.
-
+      +materialized: view  #como son las primeras capas y no las uso. Hace que no me ejecute cada vez que hago dbt run.
     intermediate:
       +materialized: view
     marts:

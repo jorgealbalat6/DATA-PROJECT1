@@ -13,7 +13,7 @@ models:
           - unique
           - not_null
       - name: municipio
-        description: "Nombre del municipio (Madrid)"
+        description: "Nombre del municipio"
       - name: estacion
         description: "Nombre real de la estación de medición"
       - name: indicador_contaminante
@@ -34,7 +34,7 @@ models:
           - unique
           - not_null
       - name: municipio
-        description: "Nombre del municipio (Madrid)"
+        description: "Nombre del municipio"
       - name: indicador_contaminante
         description: "Tipo de contaminante (NO2, PM2.5, etc)"
       - name: fecha_hora
