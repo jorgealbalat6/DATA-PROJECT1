@@ -13,5 +13,7 @@ SELECT
     DIA,
     HORA,
     VALOR AS valor,
-    VALIDACION AS datos_disponibles
+    VALIDACION AS datos_disponibles,
+    LAT AS latitud,
+    LON AS longitud
 FROM calidad_aire

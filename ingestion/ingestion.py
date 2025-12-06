@@ -23,8 +23,8 @@ def procesar_datos(cont):
     for datos in data:
         try:
             municipio = int(datos['MUNICIPIO'])
-            estacion = int(datos['ESTACION'])
-            magnitud = int(datos['MAGNITUD'])
+            estacion = datos['ESTACION']
+            magnitud = datos['MAGNITUD']
             punto = datos['PUNTO_MUESTREO']
             ano = int(datos['ANO'])
             mes = int(datos['MES'])
@@ -48,7 +48,9 @@ def procesar_datos(cont):
                         'DIA': dia,
                         'HORA': hora,
                         'VALOR': valor_hora,
-                        'VALIDACION': validacion_hora
+                        'VALIDACION': validacion_hora,
+                        'LAT': 0.0,
+                        'LON': 0.0
                     }
                     lista_inserciones.append(fila)
         except ValueError:
@@ -61,7 +63,7 @@ def procesar_datos(cont):
             buffer = io.StringIO()
 
             columnas = ['MUNICIPIO', 'ESTACION', 'MAGNITUD', 'PUNTO_MUESTREO', 
-                        'ANO', 'MES', 'DIA', 'HORA', 'VALOR', 'VALIDACION']
+                        'ANO', 'MES', 'DIA', 'HORA', 'VALOR', 'VALIDACION', 'LAT', 'LON']
             
             df[columnas].to_csv(buffer, index=False, header=False, encoding = 'utf-8')
             buffer.seek(0)
@@ -83,17 +85,17 @@ def procesar_datos(cont):
             buffer = io.StringIO()
 
             columnas = ['MUNICIPIO', 'ESTACION', 'MAGNITUD', 'PUNTO_MUESTREO', 
-                        'ANO', 'MES', 'DIA', 'HORA', 'VALOR', 'VALIDACION']
+                        'ANO', 'MES', 'DIA', 'HORA', 'VALOR', 'VALIDACION', 'LAT', 'LON']
             
             df[columnas].to_csv(buffer, index=False, header=False, encoding = 'utf-8')
             buffer.seek(0)
 
-            print(f"Enviando {len(df)} filas procesadas a la API...")
+            print(f"Enviando {len(df)} filas procesadas a la API de Madrid...")
             files = {'file': ('data.csv', buffer)}
             res = requests.post(INTERNAL_API_URL, files=files)
 
             if res.status_code == 201:
-                print("Datos insertados correctamente.")
+                print("Datos insertados correctamente de Madrid.")
                 cont += 1
             else:
                 print(f"Error API: {res.text}")
@@ -102,7 +104,11 @@ def procesar_datos(cont):
     return cont
 
 if __name__ == "__main__":
+    time.sleep(30) # Esperar a que los servicios estén activos
     print("Esperando inicio de servicios...")
     while True:
-        cont = procesar_datos(cont)
-        time.sleep(3900)
+        if cont is not None:
+            cont = procesar_datos(cont)
+        else:
+            print("[ERROR] No se han descargado datos, saltando procesamiento.", flush=True)
+        time.sleep(3600)

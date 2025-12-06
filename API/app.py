@@ -43,7 +43,9 @@ def ingest_data():
             DIA, 
             HORA, 
             VALOR, 
-            VALIDACION
+            VALIDACION,
+            LAT, 
+            LON
         )
         FROM STDIN
         WITH (FORMAT CSV)
