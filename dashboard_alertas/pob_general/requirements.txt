@@ -4,3 +4,4 @@ streamlit
 confluent-kafka
 pandas
 sqlalchemy
+uuid

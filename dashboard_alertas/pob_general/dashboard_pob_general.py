@@ -5,6 +5,7 @@ from confluent_kafka import Consumer
 import json
 import time
 import os
+import uuid
 
 # --- 1. CONFIGURACIÓN ---
 st.set_page_config(page_title="Mapa Calidad Aire", layout="wide", page_icon="🌍")
@@ -16,10 +17,10 @@ LIMITES = {
 }
 
 # --- 3. KAFKA ---
-kafka_broker = os.getenv('KAFKA_BROKER', 'localhost:9092')
+kafka_broker = 'kafka:29092'
 conf = {
     'bootstrap.servers': kafka_broker,
-    'group.id': 'dashboard_mapa_final_v1',
+    'group.id': f'dashboard_cliente_{uuid.uuid4()}',
     'auto.offset.reset': 'earliest'
 }
 
@@ -55,6 +56,13 @@ try:
             if msg is None or msg.error(): continue
             try:
                 d = json.loads(msg.value().decode('utf-8'))
+
+                # --- EL CHIVATO ---
+                # Esto imprimirá en la web los datos crudos que van llegando.
+                # Así veremos si pone "Madrid", "madrid", o qué narices pone.
+                with st.expander("🕵️ Ver dato crudo (Debug)"):
+                    st.write(d)
+                # -----------------------------------------------------------
                 
                 # Normalizar nombres (Por si DBT manda nombres largos)
                 indi = d.get('indicador') or d.get('contaminante') or d.get('magnitud')
@@ -107,7 +115,8 @@ try:
                     hover_name="estacion", hover_data={"valor": True, "lat": False, "lon": False}
                 )
                 fig.update_layout(mapbox_style="carto-positron", margin={"r":0,"t":0,"l":0,"b":0})
-                map_placeholder.plotly_chart(fig, use_container_width=True)
+                # Añadimos key=str(uuid.uuid4()) para que cada mapa sea único y no de error
+                map_placeholder.plotly_chart(fig, use_container_width=True, key=str(uuid.uuid4()))
             else:
                 map_placeholder.info(f"No hay datos de {contaminante_filter} para {ciudad_filter}...")
         
