@@ -80,6 +80,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    ports:
+      - "8501:8501"
     networks:
       - kafka-net
     restart: "no"
