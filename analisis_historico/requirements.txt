@@ -1,3 +1,6 @@
 pyspark
-psycopg[binary]==3.1.18
-plotly
+pandas
+matplotlib
+jupyter
+nbconvert
+ipykernel
