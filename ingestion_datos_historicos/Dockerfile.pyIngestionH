@@ -1,0 +1,12 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY . .
+
+RUN pip install -r requirements.txt
+
+COPY --chmod=755 ingestion_historicos.sh .
+RUN sed -i 's/\r$//' ingestion_historicos.sh
+
+CMD ["./ingestion_historicos.sh"]
