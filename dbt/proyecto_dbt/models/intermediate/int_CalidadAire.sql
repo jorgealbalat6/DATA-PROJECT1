@@ -72,8 +72,8 @@ SELECT
     END AS estacion,
 
     -- Lógica de Coordenadas (Prioriza el dato existente, si falta usa el mapa)
-    COALESCE(ca.LAT, m.lat_fix) AS LAT,
-    COALESCE(ca.LON, m.lon_fix) AS LON,
+    COALESCE(ca.latitud, m.lat_fix) AS latitud,
+    COALESCE(ca.longitud, m.lon_fix) AS longitud,
 
     -- Lógica de Indicador Químico
     CASE
