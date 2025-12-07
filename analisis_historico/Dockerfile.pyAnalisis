@@ -8,13 +8,13 @@ COPY analisis.ipynb .
 RUN apt-get update && \
     apt-get install -y default-jdk wget && \
     apt-get clean;
-RUN mkdir -p /app/jars && \
-    wget -O /app/jars/postgresql-42.7.3.jar https://jdbc.postgresql.org/download/postgresql-42.7.3.jar
+RUN mkdir -p /usr/local/jars && \
+    wget -O /usr/local/jars/postgresql-42.7.3.jar https://jdbc.postgresql.org/download/postgresql-42.7.3.jar
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY --chmod=755 ejecutar.sh .
-RUN sed -i 's/\r$//' ejecutar.sh
+COPY --chmod=755 ejecutar.sh /usr/local/bin/ejecutar.sh
+RUN sed -i 's/\r$//' /usr/local/bin/ejecutar.sh
 
-CMD ["./ejecutar.sh"]
+CMD ["/usr/local/bin/ejecutar.sh"]
 
 
