@@ -65,6 +65,9 @@ except Exception as e:
 
 try: 
     lista = ["1", "6", "7", "8", "9", "10", "12", "14", "20", "30", "35", "37", "38", "39", "42", "43", "44", "431"]
+    
+    df_historico_BCN['MAGNITUD'] = df_historico_BCN['MAGNITUD'].astype(str)
+    
     df_historico_BCN = df_historico_BCN[df_historico_BCN['MAGNITUD'].isin(lista)]
     print("Eliminados los contaminantes sin importancia")
 except Exception as e:
@@ -79,7 +82,8 @@ try:
         "LATITUD": "LAT",
         "LONGITUD": "LON"
     })
-    print("Nombre de las variables cambiado")
+    df_historico_BCN['MUNICIPIO'] = 19
+    print("Nombre de las variables cambiado y MUNICIPIO establecido a 19")
 except Exception as e:
     print("Error cambiando nombre de variables:", e)
 
