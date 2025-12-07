@@ -61,6 +61,13 @@ try:
 except Exception as e:
     print("Error eliminando la columna NOM CONTAMINANT:", e)
 
+try: 
+    lista = ["1", "6", "7", "8", "9", "10", "12", "14", "20", "30", "35", "37", "38", "39", "42", "43", "44", "431"]
+    df_historico_BCN = df_historico_BCN[df_historico_BCN['MAGNITUD'].isin(lista)]
+    print("Eliminados los contaminantes sin importancia")
+except Exception as e:
+    print("Error eliminando los contaminantes sin importancia:" e)
+
 try:
     df_historico_BCN = df_historico_BCN.rename(columns={
         "CODI EOI": "PUNTO_MUESTREO",
