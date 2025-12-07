@@ -1,9 +1,9 @@
 #!/bin/bash
 
-echo "Iniciando Script 1..."
-python -u ingestion.py &
+echo "Iniciando Script de Madrid..."
+python -u ingestionMAD.py &
 
-echo "Iniciando Script 2..."
-python -u ingestion2.py &
+echo "Iniciando Script de Barcelona..."
+python -u ingestionBCN.py &
 
 wait

@@ -3,8 +3,8 @@ FROM python:3.12-slim
 WORKDIR /app
 
 COPY requirements.txt .
-COPY ingestion.py .
-COPY ingestion2.py .
+COPY ingestionMAD.py .
+COPY ingestionBCN.py .
 RUN pip install -r requirements.txt
 
 COPY --chmod=755 ingestion.sh .
