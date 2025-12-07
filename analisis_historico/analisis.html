@@ -7555,6 +7555,7 @@ a.anchor-link {
     <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.driver.memory"</span><span class="p">,</span> <span class="s2">"2g"</span><span class="p">)</span> \
     <span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
 <span class="n">spark</span><span class="o">.</span><span class="n">sparkContext</span><span class="o">.</span><span class="n">setLogLevel</span><span class="p">(</span><span class="s2">"ERROR"</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7583,7 +7584,7 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>25/12/06 22:23:48 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+<pre>25/12/07 00:43:03 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
 </pre>
 </div>
 </div>
@@ -7624,7 +7625,13 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>BD conectada con éxito
-Datos cargados exitosamente en Pandas: 2934 filas
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Datos cargados exitosamente en Pandas: 9452482 filas
 </pre>
 </div>
 </div>
@@ -7691,15 +7698,15 @@ Datos cargados exitosamente en Pandas: 2934 filas
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>+---+---------+--------------------+---------+-------------------+-----+-----------+-----------+
-| id|municipio|            estacion|indicador|              fecha|valor|    latitud|   longitud|
-+---+---------+--------------------+---------+-------------------+-----+-----------+-----------+
-|  1|Barcelona|Estación Barcelon...|      NO2|2025-12-06 21:00:00| 57.0|41.38563194|2.168720219|
-|  2|Barcelona|Estación Barcelon...|       O3|2025-12-06 21:00:00|  5.0|41.38563194|2.168720219|
-|  3|Barcelona|Estación Barcelon...|     PM10|2025-12-06 21:00:00| 23.5|41.38563194|2.168720219|
-|  4|Barcelona|Estación Barcelon...|      NO2|2025-12-06 21:00:00| 57.0| 41.3747199|2.148458333|
-|  5|Barcelona|Estación Barcelon...|       O3|2025-12-06 21:00:00|  5.0| 41.3747199|2.148458333|
-+---+---------+--------------------+---------+-------------------+-----+-----------+-----------+
+<pre>+-------+---------+-----------+---------+-------------------+-----+----------+----------+
+|     id|municipio|   estacion|indicador|              fecha|valor|   latitud|  longitud|
++-------+---------+-----------+---------+-------------------+-----+----------+----------+
+|2398941|   Madrid|Sanchinarro|       CO|2019-10-29 10:00:00|  0.4|40.4942012|-3.6605173|
+|2398942|   Madrid|Sanchinarro|       CO|2019-10-29 11:00:00|  0.3|40.4942012|-3.6605173|
+|2398943|   Madrid|Sanchinarro|       CO|2019-10-29 12:00:00|  0.3|40.4942012|-3.6605173|
+|2398944|   Madrid|Sanchinarro|       CO|2019-10-29 13:00:00|  0.3|40.4942012|-3.6605173|
+|2398945|   Madrid|Sanchinarro|       CO|2019-10-29 14:00:00|  0.3|40.4942012|-3.6605173|
++-------+---------+-----------+---------+-------------------+-----+----------+----------+
 only showing top 5 rows
 </pre>
 </div>

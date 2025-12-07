@@ -236,9 +236,9 @@ except Exception as e:
 try: 
     if "PROVINCIA" in df_total_MAD.columns:
         df_total_MAD = df_total_MAD.drop(columns=["PROVINCIA"])
-    print("Se ha eliminado la columna correctamente")
+    print("Se ha eliminado la columna PROVINCIA correctamente")
 except Exception as e: 
-    print("Error eliminando columna:", e)
+    print("Error eliminando columna PROVINCIA:", e)
 
 try: 
     print("Transformando datos con Pandas...")
@@ -280,7 +280,7 @@ try:
         copy.write(buffer.getvalue())
     
     connection.commit()
-    print("Datos históricos ingestados correctamente en formato normalizado")
+    print("Datos históricos de Madrid ingestados correctamente en formato normalizado")
     
 except Exception as e: 
-    print("Error en la ingesta SQL:", e)
+    print("Error en la ingesta de los datos de Madrid:", e)
