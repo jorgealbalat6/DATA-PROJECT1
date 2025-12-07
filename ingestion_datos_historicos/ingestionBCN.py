@@ -17,6 +17,8 @@ for i in range(10):
 try:
     df_historico_BCN = pd.read_csv("Qualitat_de_l’aire_als_punts_de_mesurament_manuals_de_la_Xarxa_de_Vigilància_i_Previsió_de_la_Contaminació_Atmosfèrica_20251206.csv", sep=",")
     print("Se han leido correctamente el csv de Barcelona")
+    df_historico_BCN.columns = df_historico_BCN.columns.str.strip()
+    print("Columnas detectadas:", df_historico_BCN.columns.tolist())
 except Exception as e:
     print("Error leyendo el csv de Barcelona:", e)
 
@@ -66,7 +68,7 @@ try:
     df_historico_BCN = df_historico_BCN[df_historico_BCN['MAGNITUD'].isin(lista)]
     print("Eliminados los contaminantes sin importancia")
 except Exception as e:
-    print("Error eliminando los contaminantes sin importancia:" e)
+    print("Error eliminando los contaminantes sin importancia:", e)
 
 try:
     df_historico_BCN = df_historico_BCN.rename(columns={
@@ -78,19 +80,22 @@ try:
         "LONGITUD": "LON"
     })
     print("Nombre de las variables cambiado")
+except Exception as e:
+    print("Error cambiando nombre de variables:", e)
 
-try: 
+try:
     df_long = pd.wide_to_long(
         df_historico_BCN, 
-        subnames=["D"],
-        i=['MUNICIPIO', 'ESTACION', 'MAGNITUD', 'PUNTO_MUESTREO', 'ANO', 'MES', 'VALOR', 'LAT', 'LON'],
-        j=["DIA"],
+        stubnames=["D"],
+        i=['MUNICIPIO', 'ESTACION', 'MAGNITUD', 'PUNTO_MUESTREO', 'ANO', 'MES', 'LAT', 'LON'],
+        j="DIA",
         suffix=r'\d+'
     )
     df_long = df_long.rename(columns={'D': 'VALOR'})
+    df_long = df_long.reset_index()
     columnas_finales = [
         'MUNICIPIO', 'ESTACION', 'MAGNITUD', 'PUNTO_MUESTREO', 
-        'ANO', 'MES', 'DIA', 'VALOR'
+        'ANO', 'MES', 'DIA', 'VALOR', 'LAT', 'LON'
     ]
     df_final = df_long[columnas_finales].dropna(subset=['VALOR'])
     df_final['HORA'] = 0
