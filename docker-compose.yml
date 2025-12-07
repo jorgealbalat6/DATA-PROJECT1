@@ -1,25 +1,21 @@
+version: '3.9'
+
 services:
+  
   ingestion:
     build:
       context: ./ingestion
       dockerfile: Dockerfile.pyIngestion
     image: ingestion:latest
-    env_file: .env
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - kafka-net
-    restart: "no"
-  ingestion_datos_historicos:
+    profiles: ["workers"]
+
+  ingestionMAD:
     build:
-      context: ./ingestion_datos_historicos
-      dockerfile: Dockerfile.pyIngestionH
-    image: ingestion_datos_historicos:latest
-    env_file: .env
-    networks:
-      - kafka-net
-    restart: "no"
+      context: ./ingestion_datosMAD
+      dockerfile: Dockerfile.pyIngestionMAD
+    image: ingestion_datosmad:latest
+    profiles: ["workers"]
+
   alertas_pob_general:
     build:
       context: ./productores/pob_general/alertas
@@ -93,22 +89,24 @@ services:
     networks:
       - kafka-net
     restart: "no"
+
   dbt:
     build:
       context: ./dbt
       dockerfile: Dockerfile.pyDBT
     image: dbt:latest
-    env_file: .env
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - kafka-net
-    restart: unless-stopped
+    profiles: ["workers"]
+
+  analisis_historico:
+    build:
+      context: ./analisis_historico
+      dockerfile: Dockerfile.pyAnalisis
+    image: analisis_historico:latest
+    profiles: ["workers"]
+
   db:
     image: postgres:17-alpine
-    env_file:
-      - .env
+    env_file: .env
     volumes:
       - ./docker-init:/docker-entrypoint-initdb.d
       - postgres-data:/var/lib/postgresql/data
@@ -122,6 +120,20 @@ services:
       timeout: 2s
       retries: 15
     restart: "no"
+
+  api:
+    build:
+      context: ./API
+      dockerfile: Dockerfile.API
+    image: data-project-api
+    ports:
+      - "5000:5000"
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - kafka-net
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
@@ -138,6 +150,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   kafka:
     image: confluentinc/cp-kafka:7.3.0
     container_name: kafka
@@ -163,6 +176,7 @@ services:
       retries: 5
     networks:
       - kafka-net
+
   control-center:
     image: confluentinc/cp-enterprise-control-center:7.3.0
     container_name: control-center
@@ -181,89 +195,122 @@ services:
     networks:
       - kafka-net
 
-  topico_alertas_pob_generales:
+  kafka-init:
     image: confluentinc/cp-kafka:7.3.0
     depends_on:
       kafka:
         condition: service_healthy
     command: >
-      bash -c " kafka-topics --create --topic alertas_pob_generales --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists"
-    networks:
-      - kafka-net
-  topico_alertas_pob_riesgo:
-    image: confluentinc/cp-kafka:7.3.0
-    depends_on:
-      kafka:
-        condition: service_healthy
-    command: >
-      bash -c " kafka-topics --create --topic alertas_pob_riesgo --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists"
-    networks:
-      - kafka-net
-  topico_datos_pob_general:
-    image: confluentinc/cp-kafka:7.3.0
-    depends_on:
-      kafka:
-        condition: service_healthy
-    command: >
-      bash -c " kafka-topics --create --topic datos_pob_general --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists"
-    networks:
-      - kafka-net
-  topico_datos_pob_riesgo:
-    image: confluentinc/cp-kafka:7.3.0
-    depends_on:
-      kafka:
-        condition: service_healthy
-    command: >
-      bash -c " kafka-topics --create --topic datos_pob_riesgo --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists"
+      bash -c "
+      echo 'Creando tópicos...' &&
+      kafka-topics --create --topic alertas_pob_generales --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists &&
+      kafka-topics --create --topic alertas_pob_riesgo --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists &&
+      kafka-topics --create --topic datos_pob_general --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists &&
+      kafka-topics --create --topic datos_pob_riesgo --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists &&
+      echo 'Tópicos creados.'
+      "
     networks:
       - kafka-net
 
   pgadmin:
     container_name: pgadmim
     image: dpage/pgadmin4:latest
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    env_file: .env
     ports:
       - "5050:80"
     networks:
       - kafka-net
     restart: unless-stopped
 
-  api:
-    build:
-      context: ./API
-      dockerfile: Dockerfile.API
-    image: data-project-api
-    ports:
-      - "5000:5000"
-    env_file:
-      - .env
-    depends_on:
-      db:
-        condition: service_healthy
+  airflow-postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
     networks:
       - kafka-net
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      retries: 5
 
-  analisis_historico:
+  airflow-init:
     build:
-      context: ./analisis_historico
-      dockerfile: Dockerfile.pyAnalisis
-    image: analisis_historico:latest
+      context: .
+      dockerfile: Dockerfile.airflow
     env_file: .env
-    volumes:
-      - ./analisis_historico:/app
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
     depends_on:
-      db:
+      airflow-postgres:
         condition: service_healthy
     networks:
       - kafka-net
-    restart: "no"
+    command: >
+      bash -c "airflow db migrate && airflow users create --username airflow --password airflow --firstname Admin --lastname User --role Admin --email admin@example.com"
+
+  airflow:
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
+    restart: always
+    env_file: .env
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=false 
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8080:8080"
+    command: webserver
+    depends_on:
+      airflow-postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    networks:
+      - kafka-net
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  airflow-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
+    restart: always
+    env_file: .env
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=false
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: scheduler
+    depends_on:
+      airflow-postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    networks:
+      - kafka-net
 
 networks:
   kafka-net:
     driver: bridge
+    name: kafka-net
+
 volumes:
   postgres-data:
-
-

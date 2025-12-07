@@ -1,0 +1,171 @@
+[2025-12-07T19:18:14.902+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-12-07T19:18:14.931+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_general scheduled__2025-12-07T18:00:00+00:00 [queued]>
+[2025-12-07T19:18:14.939+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_general scheduled__2025-12-07T18:00:00+00:00 [queued]>
+[2025-12-07T19:18:14.940+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-12-07T19:18:14.954+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): ingestion_general> on 2025-12-07 18:00:00+00:00
+[2025-12-07T19:18:14.962+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'flujo_etl_completo', 'ingestion_general', 'scheduled__2025-12-07T18:00:00+00:00', '--job-id', '5', '--raw', '--subdir', 'DAGS_FOLDER/pipeline_completo.py', '--cfg-path', '/tmp/tmp5f5rgrsb']
+[2025-12-07T19:18:14.967+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=185) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-12-07T19:18:14.967+0000] {standard_task_runner.py:91} INFO - Job 5: Subtask ingestion_general
+[2025-12-07T19:18:14.968+0000] {standard_task_runner.py:63} INFO - Started process 189 to run task
+[2025-12-07T19:18:15.054+0000] {task_command.py:426} INFO - Running <TaskInstance: flujo_etl_completo.ingestion_general scheduled__2025-12-07T18:00:00+00:00 [running]> on host c789b5fcdbdb
+[2025-12-07T19:18:15.134+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='tu_nombre' AIRFLOW_CTX_DAG_ID='flujo_etl_completo' AIRFLOW_CTX_TASK_ID='ingestion_general' AIRFLOW_CTX_EXECUTION_DATE='2025-12-07T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-12-07T18:00:00+00:00'
+[2025-12-07T19:18:15.135+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-12-07T19:18:15.223+0000] {docker.py:493} INFO - Pulling docker image ingestion:latest
+[2025-12-07T19:18:16.002+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-12-07T19:18:16.004+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/client.py", line 265, in _raise_for_status
+    response.raise_for_status()
+  File "/home/airflow/.local/lib/python3.12/site-packages/requests/models.py", line 1021, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: http+docker://localhost/v1.51/images/create?tag=latest&fromImage=ingestion
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 400, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 495, in execute
+    for output in self.cli.pull(self.image, stream=True, decode=True):
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/image.py", line 429, in pull
+    self._raise_for_status(response)
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/client.py", line 267, in _raise_for_status
+    raise create_api_error_from_http_exception(e) from e
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/errors.py", line 39, in create_api_error_from_http_exception
+    raise cls(e, response=response, explanation=explanation) from e
+docker.errors.ImageNotFound: 404 Client Error for http+docker://localhost/v1.51/images/create?tag=latest&fromImage=ingestion: Not Found ("pull access denied for ingestion, repository does not exist or may require 'docker login'")
+[2025-12-07T19:18:16.017+0000] {taskinstance.py:1206} INFO - Marking task as FAILED. dag_id=flujo_etl_completo, task_id=ingestion_general, run_id=scheduled__2025-12-07T18:00:00+00:00, execution_date=20251207T180000, start_date=20251207T191814, end_date=20251207T191816
+[2025-12-07T19:18:16.038+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 5 for task ingestion_general (404 Client Error for http+docker://localhost/v1.51/images/create?tag=latest&fromImage=ingestion: Not Found ("pull access denied for ingestion, repository does not exist or may require 'docker login'"); 189)
+[2025-12-07T19:18:16.068+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 1
+[2025-12-07T19:18:16.103+0000] {taskinstance.py:3498} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-12-07T19:18:16.109+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
+[2025-12-07T19:21:18.549+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-12-07T19:21:18.577+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_general scheduled__2025-12-07T18:00:00+00:00 [queued]>
+[2025-12-07T19:21:18.587+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_general scheduled__2025-12-07T18:00:00+00:00 [queued]>
+[2025-12-07T19:21:18.587+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-12-07T19:21:18.601+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): ingestion_general> on 2025-12-07 18:00:00+00:00
+[2025-12-07T19:21:18.610+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=173) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-12-07T19:21:18.608+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'flujo_etl_completo', 'ingestion_general', 'scheduled__2025-12-07T18:00:00+00:00', '--job-id', '2', '--raw', '--subdir', 'DAGS_FOLDER/pipeline_completo.py', '--cfg-path', '/tmp/tmp9jw3tcfg']
+[2025-12-07T19:21:18.612+0000] {standard_task_runner.py:63} INFO - Started process 175 to run task
+[2025-12-07T19:21:18.612+0000] {standard_task_runner.py:91} INFO - Job 2: Subtask ingestion_general
+[2025-12-07T19:21:18.693+0000] {task_command.py:426} INFO - Running <TaskInstance: flujo_etl_completo.ingestion_general scheduled__2025-12-07T18:00:00+00:00 [running]> on host 8cf28b355173
+[2025-12-07T19:21:18.762+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='tu_nombre' AIRFLOW_CTX_DAG_ID='flujo_etl_completo' AIRFLOW_CTX_TASK_ID='ingestion_general' AIRFLOW_CTX_EXECUTION_DATE='2025-12-07T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-12-07T18:00:00+00:00'
+[2025-12-07T19:21:18.763+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-12-07T19:21:18.827+0000] {docker.py:493} INFO - Pulling docker image ingestion:latest
+[2025-12-07T19:21:19.620+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-12-07T19:21:19.638+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/client.py", line 265, in _raise_for_status
+    response.raise_for_status()
+  File "/home/airflow/.local/lib/python3.12/site-packages/requests/models.py", line 1021, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: http+docker://localhost/v1.51/images/create?tag=latest&fromImage=ingestion
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 400, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 495, in execute
+    for output in self.cli.pull(self.image, stream=True, decode=True):
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/image.py", line 429, in pull
+    self._raise_for_status(response)
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/client.py", line 267, in _raise_for_status
+    raise create_api_error_from_http_exception(e) from e
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/errors.py", line 39, in create_api_error_from_http_exception
+    raise cls(e, response=response, explanation=explanation) from e
+docker.errors.ImageNotFound: 404 Client Error for http+docker://localhost/v1.51/images/create?tag=latest&fromImage=ingestion: Not Found ("pull access denied for ingestion, repository does not exist or may require 'docker login'")
+[2025-12-07T19:21:19.659+0000] {taskinstance.py:1206} INFO - Marking task as FAILED. dag_id=flujo_etl_completo, task_id=ingestion_general, run_id=scheduled__2025-12-07T18:00:00+00:00, execution_date=20251207T180000, start_date=20251207T192118, end_date=20251207T192119
+[2025-12-07T19:21:19.689+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 2 for task ingestion_general (404 Client Error for http+docker://localhost/v1.51/images/create?tag=latest&fromImage=ingestion: Not Found ("pull access denied for ingestion, repository does not exist or may require 'docker login'"); 175)
+[2025-12-07T19:21:19.711+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 1
+[2025-12-07T19:21:19.749+0000] {taskinstance.py:3498} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-12-07T19:21:19.760+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
+[2025-12-07T19:40:20.742+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-12-07T19:40:20.773+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_general scheduled__2025-12-07T18:00:00+00:00 [queued]>
+[2025-12-07T19:40:20.783+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_general scheduled__2025-12-07T18:00:00+00:00 [queued]>
+[2025-12-07T19:40:20.784+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-12-07T19:40:20.798+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): ingestion_general> on 2025-12-07 18:00:00+00:00
+[2025-12-07T19:40:20.808+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'flujo_etl_completo', 'ingestion_general', 'scheduled__2025-12-07T18:00:00+00:00', '--job-id', '2', '--raw', '--subdir', 'DAGS_FOLDER/pipeline_completo.py', '--cfg-path', '/tmp/tmpflq_5myx']
+[2025-12-07T19:40:20.812+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=174) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-12-07T19:40:20.814+0000] {standard_task_runner.py:91} INFO - Job 2: Subtask ingestion_general
+[2025-12-07T19:40:20.814+0000] {standard_task_runner.py:63} INFO - Started process 176 to run task
+[2025-12-07T19:40:20.915+0000] {task_command.py:426} INFO - Running <TaskInstance: flujo_etl_completo.ingestion_general scheduled__2025-12-07T18:00:00+00:00 [running]> on host 7b1ba78ab7b7
+[2025-12-07T19:40:20.996+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='tu_nombre' AIRFLOW_CTX_DAG_ID='flujo_etl_completo' AIRFLOW_CTX_TASK_ID='ingestion_general' AIRFLOW_CTX_EXECUTION_DATE='2025-12-07T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-12-07T18:00:00+00:00'
+[2025-12-07T19:40:20.997+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-12-07T19:40:21.145+0000] {docker.py:366} INFO - Starting docker container from image ingestion:latest
+[2025-12-07T19:40:21.590+0000] {docker.py:436} INFO - Iniciando Script 1...
+[2025-12-07T19:40:21.591+0000] {docker.py:436} INFO - Iniciando Script 2...
+[2025-12-07T19:40:23.029+0000] {docker.py:436} INFO - --- Iniciando ejecución orquestada por Airflow ------ Iniciando ejecución orquestada por Airflow ---
+
+Descargando datos de Madrid...
+Descargando datos de Barcelona...
+[2025-12-07T19:40:23.753+0000] {docker.py:436} INFO - Transformando 99 registros.
+[2025-12-07T19:40:23.756+0000] {docker.py:436} INFO - Transformando 122 registros (Wide -> Long)...
+[2025-12-07T19:40:23.774+0000] {docker.py:436} INFO - Enviando 128 filas procesadas a la API de Barcelona...
+[2025-12-07T19:40:23.780+0000] {docker.py:436} INFO - Enviando 2440 filas procesadas a la API...
+[2025-12-07T19:40:23.792+0000] {docker.py:436} INFO - Error API: {
+  "error": "sending query failed: another command is already in progress"
+}
+[2025-12-07T19:40:23.794+0000] {docker.py:436} INFO - Procesamiento finalizado con éxito.
+--- Fin del script ---
+[2025-12-07T19:40:23.795+0000] {docker.py:436} INFO - Datos insertados correctamente de Barcelona.
+[2025-12-07T19:40:23.797+0000] {docker.py:436} INFO - Procesamiento finalizado con éxito.
+--- Fin del script ---
+[2025-12-07T19:40:24.211+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-12-07T19:40:24.255+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=flujo_etl_completo, task_id=ingestion_general, run_id=scheduled__2025-12-07T18:00:00+00:00, execution_date=20251207T180000, start_date=20251207T194020, end_date=20251207T194024
+[2025-12-07T19:40:24.305+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-12-07T19:40:24.348+0000] {taskinstance.py:3498} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-12-07T19:40:24.351+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
+[2025-12-07T19:51:10.646+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-12-07T19:51:10.680+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_general scheduled__2025-12-07T18:00:00+00:00 [queued]>
+[2025-12-07T19:51:10.689+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_general scheduled__2025-12-07T18:00:00+00:00 [queued]>
+[2025-12-07T19:51:10.690+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-12-07T19:51:10.706+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): ingestion_general> on 2025-12-07 18:00:00+00:00
+[2025-12-07T19:51:10.718+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=173) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-12-07T19:51:10.718+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'flujo_etl_completo', 'ingestion_general', 'scheduled__2025-12-07T18:00:00+00:00', '--job-id', '3', '--raw', '--subdir', 'DAGS_FOLDER/pipeline_completo.py', '--cfg-path', '/tmp/tmpc6caxdjz']
+[2025-12-07T19:51:10.720+0000] {standard_task_runner.py:63} INFO - Started process 175 to run task
+[2025-12-07T19:51:10.721+0000] {standard_task_runner.py:91} INFO - Job 3: Subtask ingestion_general
+[2025-12-07T19:51:10.828+0000] {task_command.py:426} INFO - Running <TaskInstance: flujo_etl_completo.ingestion_general scheduled__2025-12-07T18:00:00+00:00 [running]> on host 5a1cc3bf0439
+[2025-12-07T19:51:10.919+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='tu_nombre' AIRFLOW_CTX_DAG_ID='flujo_etl_completo' AIRFLOW_CTX_TASK_ID='ingestion_general' AIRFLOW_CTX_EXECUTION_DATE='2025-12-07T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-12-07T18:00:00+00:00'
+[2025-12-07T19:51:10.920+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-12-07T19:51:11.067+0000] {docker.py:366} INFO - Starting docker container from image ingestion:latest
+[2025-12-07T19:51:11.600+0000] {docker.py:436} INFO - Iniciando Script 1...
+[2025-12-07T19:51:11.601+0000] {docker.py:436} INFO - Iniciando Script 2...
+[2025-12-07T19:51:12.781+0000] {docker.py:436} INFO - --- Iniciando ejecución orquestada por Airflow ---
+Descargando datos de Madrid...
+--- Iniciando ejecución orquestada por Airflow ---
+Descargando datos de Barcelona...
+[2025-12-07T19:51:13.279+0000] {docker.py:436} INFO - Transformando 122 registros (Wide -> Long)...
+[2025-12-07T19:51:13.330+0000] {docker.py:436} INFO - Enviando 2440 filas procesadas a la API...
+[2025-12-07T19:51:13.332+0000] {docker.py:436} INFO - 
+[2025-12-07T19:51:13.360+0000] {docker.py:436} INFO - Transformando 99 registros.
+[2025-12-07T19:51:13.378+0000] {docker.py:436} INFO - Datos insertados correctamente.
+[2025-12-07T19:51:13.380+0000] {docker.py:436} INFO - Procesamiento finalizado con éxito.
+--- Fin del script ---
+[2025-12-07T19:51:13.381+0000] {docker.py:436} INFO - Enviando 128 filas procesadas a la API de Barcelona...
+[2025-12-07T19:51:13.396+0000] {docker.py:436} INFO - Datos insertados correctamente de Barcelona.
+[2025-12-07T19:51:13.398+0000] {docker.py:436} INFO - Procesamiento finalizado con éxito.
+--- Fin del script ---
+[2025-12-07T19:51:14.045+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-12-07T19:51:14.094+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=flujo_etl_completo, task_id=ingestion_general, run_id=scheduled__2025-12-07T18:00:00+00:00, execution_date=20251207T180000, start_date=20251207T195110, end_date=20251207T195114
+[2025-12-07T19:51:14.167+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-12-07T19:51:14.241+0000] {taskinstance.py:3498} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-12-07T19:51:14.244+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

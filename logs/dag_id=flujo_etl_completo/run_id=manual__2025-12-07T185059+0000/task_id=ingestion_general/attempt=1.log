@@ -1,0 +1,34 @@
+[2025-12-07T18:52:17.916+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-12-07T18:52:17.940+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_general manual__2025-12-07T18:50:59+00:00 [queued]>
+[2025-12-07T18:52:17.947+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_general manual__2025-12-07T18:50:59+00:00 [queued]>
+[2025-12-07T18:52:17.951+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-12-07T18:52:17.966+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): ingestion_general> on 2025-12-07 18:50:59+00:00
+[2025-12-07T18:52:17.975+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=189) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-12-07T18:52:17.973+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'flujo_etl_completo', 'ingestion_general', 'manual__2025-12-07T18:50:59+00:00', '--job-id', '4', '--raw', '--subdir', 'DAGS_FOLDER/pipeline_completo.py', '--cfg-path', '/tmp/tmpoyrpmxze']
+[2025-12-07T18:52:17.976+0000] {standard_task_runner.py:63} INFO - Started process 194 to run task
+[2025-12-07T18:52:17.976+0000] {standard_task_runner.py:91} INFO - Job 4: Subtask ingestion_general
+[2025-12-07T18:52:18.053+0000] {task_command.py:426} INFO - Running <TaskInstance: flujo_etl_completo.ingestion_general manual__2025-12-07T18:50:59+00:00 [running]> on host 708dcd85c9de
+[2025-12-07T18:52:18.117+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='tu_nombre' AIRFLOW_CTX_DAG_ID='flujo_etl_completo' AIRFLOW_CTX_TASK_ID='ingestion_general' AIRFLOW_CTX_EXECUTION_DATE='2025-12-07T18:50:59+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-12-07T18:50:59+00:00'
+[2025-12-07T18:52:18.118+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-12-07T18:52:18.240+0000] {docker.py:366} INFO - Starting docker container from image ingestion:latest
+[2025-12-07T18:52:18.677+0000] {docker.py:436} INFO - Iniciando Script 1...
+[2025-12-07T18:52:18.678+0000] {docker.py:436} INFO - Iniciando Script 2...
+[2025-12-07T18:52:19.491+0000] {docker.py:436} INFO - --- Iniciando ejecución orquestada por Airflow ---
+Descargando datos de Barcelona...
+--- Iniciando ejecución orquestada por Airflow ---
+Descargando datos de Madrid...
+[2025-12-07T18:52:19.855+0000] {docker.py:436} INFO - Transformando 99 registros.
+[2025-12-07T18:52:19.869+0000] {docker.py:436} INFO - Enviando 128 filas procesadas a la API de Barcelona...
+[2025-12-07T18:52:19.876+0000] {docker.py:436} INFO - Datos insertados correctamente de Barcelona.
+[2025-12-07T18:52:19.878+0000] {docker.py:436} INFO - Procesamiento finalizado con éxito.
+--- Fin del script ---
+[2025-12-07T18:52:20.155+0000] {docker.py:436} INFO - Transformando 122 registros (Wide -> Long)...
+[2025-12-07T18:52:20.169+0000] {docker.py:436} INFO - Enviando 2318 filas procesadas a la API...
+[2025-12-07T18:52:20.180+0000] {docker.py:436} INFO - Datos insertados correctamente.
+[2025-12-07T18:52:20.181+0000] {docker.py:436} INFO - Procesamiento finalizado con éxito.
+--- Fin del script ---
+[2025-12-07T18:52:20.446+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-12-07T18:52:20.471+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=flujo_etl_completo, task_id=ingestion_general, run_id=manual__2025-12-07T18:50:59+00:00, execution_date=20251207T185059, start_date=20251207T185217, end_date=20251207T185220
+[2025-12-07T18:52:20.527+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-12-07T18:52:20.552+0000] {taskinstance.py:3498} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-12-07T18:52:20.554+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
