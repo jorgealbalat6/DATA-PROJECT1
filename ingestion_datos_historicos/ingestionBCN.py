@@ -52,7 +52,14 @@ try:
         df_historico_BCN = df_historico_BCN.drop(columns=["Georeferència"])
     print("Se ha eliminado la columna Georeferència correctamente")
 except Exception as e: 
-    print("Error eliminando la columna Georeferència", e)
+    print("Error eliminando la columna Georeferència:", e)
+
+try: 
+    if "NOM CONTAMINANT" in df_historico_BCN:
+        df_historico_BCN = df_historico_BCN.drop(columns=["NOM CONTAMINANT"])
+    print("Se ha eliminado la columna NOM CONTAMINANT correctamente")
+except Exception as e:
+    print("Error eliminando la columna NOM CONTAMINANT:", e)
 
 try:
     df_historico_BCN = df_historico_BCN.rename(columns={
@@ -69,7 +76,7 @@ try:
     df_long = pd.wide_to_long(
         df_historico_BCN, 
         subnames=["D"],
-        i=[],
+        i=['MUNICIPIO', 'ESTACION', 'MAGNITUD', 'PUNTO_MUESTREO', 'ANO', 'MES', 'VALOR', 'LAT', 'LON'],
         j=["DIA"],
         suffix=r'\d+'
     )
@@ -89,7 +96,7 @@ try:
     print(f"Transformación completada. Filas resultantes: {len(df_final)}")
 except Exception as e: 
     print("Error en la transformación de datos:", e)
-    exit()
+    exit() 
 
 
 try:
@@ -110,7 +117,7 @@ try:
         copy.write(buffer.getvalue())
 
     connection.commit()
-    print("Datos históricos ingestados correctamente en formato normalizado")
+    print("Datos históricos de Barcelona ingestados correctamente en formato normalizado")
 
 except Exception as e:
     print("Error en la ingesta de los datos de Barcelona:", e)
