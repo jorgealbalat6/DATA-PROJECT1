@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+sleep 240
 
 echo "Iniciando ejecución del análisis histórico..."
 

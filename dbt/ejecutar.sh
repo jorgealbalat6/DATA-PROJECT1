@@ -1,6 +1,6 @@
 #!/bin/bash
-echo "Esperando 120 segundos iniciales de cortesía para arrancar..."
-sleep 120
+echo "Esperando 180 segundos iniciales de cortesía para arrancar..."
+sleep 180
 # Bucle infinito
 while true; do
   echo "Iniciando dbt run..."

@@ -11,14 +11,12 @@ services:
     networks:
       - kafka-net
     restart: "no"
-  ingestionMAD:
+  ingestion_datos_historicos:
     build:
-      context: ./ingestion_datosMAD
-      dockerfile: Dockerfile.pyIngestionMAD
-    image: ingestion_datosmad:latest
+      context: ./ingestion_datos_historicos
+      dockerfile: Dockerfile.pyIngestionH
+    image: ingestion_datos_historicos:latest
     env_file: .env
-    environment:
-      - API_URL=http://api:5000
     networks:
       - kafka-net
     restart: "no"
