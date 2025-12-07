@@ -1,0 +1,181 @@
+[2025-12-07T19:18:14.901+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-12-07T19:18:14.930+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_madrid scheduled__2025-12-07T18:00:00+00:00 [queued]>
+[2025-12-07T19:18:14.938+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_madrid scheduled__2025-12-07T18:00:00+00:00 [queued]>
+[2025-12-07T19:18:14.940+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-12-07T19:18:14.954+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): ingestion_madrid> on 2025-12-07 18:00:00+00:00
+[2025-12-07T19:18:14.964+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'flujo_etl_completo', 'ingestion_madrid', 'scheduled__2025-12-07T18:00:00+00:00', '--job-id', '4', '--raw', '--subdir', 'DAGS_FOLDER/pipeline_completo.py', '--cfg-path', '/tmp/tmpydkkc95d']
+[2025-12-07T19:18:14.965+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=186) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-12-07T19:18:14.967+0000] {standard_task_runner.py:91} INFO - Job 4: Subtask ingestion_madrid
+[2025-12-07T19:18:14.967+0000] {standard_task_runner.py:63} INFO - Started process 188 to run task
+[2025-12-07T19:18:15.060+0000] {task_command.py:426} INFO - Running <TaskInstance: flujo_etl_completo.ingestion_madrid scheduled__2025-12-07T18:00:00+00:00 [running]> on host c789b5fcdbdb
+[2025-12-07T19:18:15.143+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='tu_nombre' AIRFLOW_CTX_DAG_ID='flujo_etl_completo' AIRFLOW_CTX_TASK_ID='ingestion_madrid' AIRFLOW_CTX_EXECUTION_DATE='2025-12-07T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-12-07T18:00:00+00:00'
+[2025-12-07T19:18:15.145+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-12-07T19:18:15.246+0000] {docker.py:493} INFO - Pulling docker image ingestion_datosmad:latest
+[2025-12-07T19:18:15.998+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-12-07T19:18:15.999+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/client.py", line 265, in _raise_for_status
+    response.raise_for_status()
+  File "/home/airflow/.local/lib/python3.12/site-packages/requests/models.py", line 1021, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: http+docker://localhost/v1.51/images/create?tag=latest&fromImage=ingestion_datosmad
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 400, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 495, in execute
+    for output in self.cli.pull(self.image, stream=True, decode=True):
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/image.py", line 429, in pull
+    self._raise_for_status(response)
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/client.py", line 267, in _raise_for_status
+    raise create_api_error_from_http_exception(e) from e
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/errors.py", line 39, in create_api_error_from_http_exception
+    raise cls(e, response=response, explanation=explanation) from e
+docker.errors.ImageNotFound: 404 Client Error for http+docker://localhost/v1.51/images/create?tag=latest&fromImage=ingestion_datosmad: Not Found ("pull access denied for ingestion_datosmad, repository does not exist or may require 'docker login'")
+[2025-12-07T19:18:16.015+0000] {taskinstance.py:1206} INFO - Marking task as FAILED. dag_id=flujo_etl_completo, task_id=ingestion_madrid, run_id=scheduled__2025-12-07T18:00:00+00:00, execution_date=20251207T180000, start_date=20251207T191814, end_date=20251207T191816
+[2025-12-07T19:18:16.028+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 4 for task ingestion_madrid (404 Client Error for http+docker://localhost/v1.51/images/create?tag=latest&fromImage=ingestion_datosmad: Not Found ("pull access denied for ingestion_datosmad, repository does not exist or may require 'docker login'"); 188)
+[2025-12-07T19:18:16.066+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 1
+[2025-12-07T19:18:16.088+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
+[2025-12-07T19:21:18.549+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-12-07T19:21:18.578+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_madrid scheduled__2025-12-07T18:00:00+00:00 [queued]>
+[2025-12-07T19:21:18.587+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_madrid scheduled__2025-12-07T18:00:00+00:00 [queued]>
+[2025-12-07T19:21:18.588+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-12-07T19:21:18.602+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): ingestion_madrid> on 2025-12-07 18:00:00+00:00
+[2025-12-07T19:21:18.611+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=174) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-12-07T19:21:18.610+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'flujo_etl_completo', 'ingestion_madrid', 'scheduled__2025-12-07T18:00:00+00:00', '--job-id', '3', '--raw', '--subdir', 'DAGS_FOLDER/pipeline_completo.py', '--cfg-path', '/tmp/tmpx12vrevw']
+[2025-12-07T19:21:18.612+0000] {standard_task_runner.py:63} INFO - Started process 176 to run task
+[2025-12-07T19:21:18.613+0000] {standard_task_runner.py:91} INFO - Job 3: Subtask ingestion_madrid
+[2025-12-07T19:21:18.683+0000] {task_command.py:426} INFO - Running <TaskInstance: flujo_etl_completo.ingestion_madrid scheduled__2025-12-07T18:00:00+00:00 [running]> on host 8cf28b355173
+[2025-12-07T19:21:18.756+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='tu_nombre' AIRFLOW_CTX_DAG_ID='flujo_etl_completo' AIRFLOW_CTX_TASK_ID='ingestion_madrid' AIRFLOW_CTX_EXECUTION_DATE='2025-12-07T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-12-07T18:00:00+00:00'
+[2025-12-07T19:21:18.757+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-12-07T19:21:18.817+0000] {docker.py:493} INFO - Pulling docker image ingestion_datosmad:latest
+[2025-12-07T19:21:19.724+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-12-07T19:21:19.739+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/client.py", line 265, in _raise_for_status
+    response.raise_for_status()
+  File "/home/airflow/.local/lib/python3.12/site-packages/requests/models.py", line 1021, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: http+docker://localhost/v1.51/images/create?tag=latest&fromImage=ingestion_datosmad
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 400, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 495, in execute
+    for output in self.cli.pull(self.image, stream=True, decode=True):
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/image.py", line 429, in pull
+    self._raise_for_status(response)
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/client.py", line 267, in _raise_for_status
+    raise create_api_error_from_http_exception(e) from e
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/errors.py", line 39, in create_api_error_from_http_exception
+    raise cls(e, response=response, explanation=explanation) from e
+docker.errors.ImageNotFound: 404 Client Error for http+docker://localhost/v1.51/images/create?tag=latest&fromImage=ingestion_datosmad: Not Found ("pull access denied for ingestion_datosmad, repository does not exist or may require 'docker login'")
+[2025-12-07T19:21:19.758+0000] {taskinstance.py:1206} INFO - Marking task as FAILED. dag_id=flujo_etl_completo, task_id=ingestion_madrid, run_id=scheduled__2025-12-07T18:00:00+00:00, execution_date=20251207T180000, start_date=20251207T192118, end_date=20251207T192119
+[2025-12-07T19:21:19.775+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 3 for task ingestion_madrid (404 Client Error for http+docker://localhost/v1.51/images/create?tag=latest&fromImage=ingestion_datosmad: Not Found ("pull access denied for ingestion_datosmad, repository does not exist or may require 'docker login'"); 176)
+[2025-12-07T19:21:19.831+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 1
+[2025-12-07T19:21:19.863+0000] {taskinstance.py:3498} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-12-07T19:21:19.875+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
+[2025-12-07T19:40:20.742+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-12-07T19:40:20.773+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_madrid scheduled__2025-12-07T18:00:00+00:00 [queued]>
+[2025-12-07T19:40:20.783+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_madrid scheduled__2025-12-07T18:00:00+00:00 [queued]>
+[2025-12-07T19:40:20.784+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-12-07T19:40:20.799+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): ingestion_madrid> on 2025-12-07 18:00:00+00:00
+[2025-12-07T19:40:20.811+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=173) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-12-07T19:40:20.809+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'flujo_etl_completo', 'ingestion_madrid', 'scheduled__2025-12-07T18:00:00+00:00', '--job-id', '3', '--raw', '--subdir', 'DAGS_FOLDER/pipeline_completo.py', '--cfg-path', '/tmp/tmppsp2qfxz']
+[2025-12-07T19:40:20.814+0000] {standard_task_runner.py:63} INFO - Started process 175 to run task
+[2025-12-07T19:40:20.814+0000] {standard_task_runner.py:91} INFO - Job 3: Subtask ingestion_madrid
+[2025-12-07T19:40:20.915+0000] {task_command.py:426} INFO - Running <TaskInstance: flujo_etl_completo.ingestion_madrid scheduled__2025-12-07T18:00:00+00:00 [running]> on host 7b1ba78ab7b7
+[2025-12-07T19:40:20.997+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='tu_nombre' AIRFLOW_CTX_DAG_ID='flujo_etl_completo' AIRFLOW_CTX_TASK_ID='ingestion_madrid' AIRFLOW_CTX_EXECUTION_DATE='2025-12-07T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-12-07T18:00:00+00:00'
+[2025-12-07T19:40:20.998+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-12-07T19:40:21.120+0000] {docker.py:366} INFO - Starting docker container from image ingestion_datosmad:latest
+[2025-12-07T19:41:52.239+0000] {docker.py:436} INFO - Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Se han leido correctamente los csv de 2018
+Se han leido correctamente los csv de 2019
+Se han leido correctamente los csv de 2020
+Se han leido correctamente los csv de 2021
+Se han leido correctamente los csv de 2022
+Se han leido correctamente los csv de 2023
+Se han leido correctamente los csv de 2024
+Se ha leido correctamente el csv de 2025
+Se han unido todos los csv
+Se ha eliminado la columna correctamente
+Transformando datos con Pandas...
+Transformación completada. Filas resultantes: 9452232
+Error en la ingesta SQL: name 'cur' is not defined
+[2025-12-07T19:41:56.351+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-12-07T19:41:56.390+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=flujo_etl_completo, task_id=ingestion_madrid, run_id=scheduled__2025-12-07T18:00:00+00:00, execution_date=20251207T180000, start_date=20251207T194020, end_date=20251207T194156
+[2025-12-07T19:41:56.441+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-12-07T19:41:56.485+0000] {taskinstance.py:3498} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-12-07T19:41:56.488+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
+[2025-12-07T19:51:10.646+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-12-07T19:51:10.680+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_madrid scheduled__2025-12-07T18:00:00+00:00 [queued]>
+[2025-12-07T19:51:10.689+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_madrid scheduled__2025-12-07T18:00:00+00:00 [queued]>
+[2025-12-07T19:51:10.690+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-12-07T19:51:10.707+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): ingestion_madrid> on 2025-12-07 18:00:00+00:00
+[2025-12-07T19:51:10.716+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'flujo_etl_completo', 'ingestion_madrid', 'scheduled__2025-12-07T18:00:00+00:00', '--job-id', '2', '--raw', '--subdir', 'DAGS_FOLDER/pipeline_completo.py', '--cfg-path', '/tmp/tmpg1lt9mxn']
+[2025-12-07T19:51:10.720+0000] {standard_task_runner.py:91} INFO - Job 2: Subtask ingestion_madrid
+[2025-12-07T19:51:10.721+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=174) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-12-07T19:51:10.724+0000] {standard_task_runner.py:63} INFO - Started process 176 to run task
+[2025-12-07T19:51:10.828+0000] {task_command.py:426} INFO - Running <TaskInstance: flujo_etl_completo.ingestion_madrid scheduled__2025-12-07T18:00:00+00:00 [running]> on host 5a1cc3bf0439
+[2025-12-07T19:51:10.919+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='tu_nombre' AIRFLOW_CTX_DAG_ID='flujo_etl_completo' AIRFLOW_CTX_TASK_ID='ingestion_madrid' AIRFLOW_CTX_EXECUTION_DATE='2025-12-07T18:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-12-07T18:00:00+00:00'
+[2025-12-07T19:51:10.920+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-12-07T19:51:11.063+0000] {docker.py:366} INFO - Starting docker container from image ingestion_datosmad:latest
+[2025-12-07T19:52:47.604+0000] {docker.py:436} INFO - Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Error conectando a la BD: 'NoneType' object has no attribute 'encode'
+Se han leido correctamente los csv de 2018
+Se han leido correctamente los csv de 2019
+Se han leido correctamente los csv de 2020
+Se han leido correctamente los csv de 2021
+Se han leido correctamente los csv de 2022
+Se han leido correctamente los csv de 2023
+Se han leido correctamente los csv de 2024
+Se ha leido correctamente el csv de 2025
+Se han unido todos los csv
+Se ha eliminado la columna correctamente
+Transformando datos con Pandas...
+Transformación completada. Filas resultantes: 9452232
+Error en la ingesta SQL: name 'cur' is not defined
+[2025-12-07T19:52:50.465+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-12-07T19:52:50.508+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=flujo_etl_completo, task_id=ingestion_madrid, run_id=scheduled__2025-12-07T18:00:00+00:00, execution_date=20251207T180000, start_date=20251207T195110, end_date=20251207T195250
+[2025-12-07T19:52:50.574+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-12-07T19:52:50.639+0000] {taskinstance.py:3498} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-12-07T19:52:50.642+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

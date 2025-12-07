@@ -1,0 +1,44 @@
+[2025-12-07T18:18:55.469+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-12-07T18:18:55.676+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: flujo_etl_completo.dbt_transformacion scheduled__2025-12-07T17:00:00+00:00 [queued]>
+[2025-12-07T18:18:55.718+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: flujo_etl_completo.dbt_transformacion scheduled__2025-12-07T17:00:00+00:00 [queued]>
+[2025-12-07T18:18:55.725+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-12-07T18:18:55.830+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): dbt_transformacion> on 2025-12-07 17:00:00+00:00
+[2025-12-07T18:18:55.855+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'flujo_etl_completo', 'dbt_transformacion', 'scheduled__2025-12-07T17:00:00+00:00', '--job-id', '4', '--raw', '--subdir', 'DAGS_FOLDER/pipeline_completo.py', '--cfg-path', '/tmp/tmpu8xvkzzm']
+[2025-12-07T18:18:55.860+0000] {standard_task_runner.py:91} INFO - Job 4: Subtask dbt_transformacion
+[2025-12-07T18:18:55.866+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=227) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-12-07T18:18:55.870+0000] {standard_task_runner.py:63} INFO - Started process 228 to run task
+[2025-12-07T18:18:56.018+0000] {task_command.py:426} INFO - Running <TaskInstance: flujo_etl_completo.dbt_transformacion scheduled__2025-12-07T17:00:00+00:00 [running]> on host ec492881777a
+[2025-12-07T18:18:56.291+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='tu_nombre' AIRFLOW_CTX_DAG_ID='flujo_etl_completo' AIRFLOW_CTX_TASK_ID='dbt_transformacion' AIRFLOW_CTX_EXECUTION_DATE='2025-12-07T17:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-12-07T17:00:00+00:00'
+[2025-12-07T18:18:56.297+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-12-07T18:18:56.622+0000] {docker.py:366} INFO - Starting docker container from image dbt:latest
+[2025-12-07T18:19:00.166+0000] {docker.py:436} INFO - [0m18:19:00  Running with dbt=1.10.15
+[2025-12-07T18:19:00.167+0000] {docker.py:436} INFO - [0m18:19:00  Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path /app/dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+[2025-12-07T18:19:02.054+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-12-07T18:19:02.070+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 400, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 509, in execute
+    return self._run_image()
+           ^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 383, in _run_image
+    return self._run_image_with_mounts(self.mounts, add_tmp_variable=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 444, in _run_image_with_mounts
+    raise DockerContainerFailedException(f"Docker container failed: {result!r}", logs=log_lines)
+airflow.providers.docker.exceptions.DockerContainerFailedException: Docker container failed: {'StatusCode': 2}
+[2025-12-07T18:19:02.091+0000] {taskinstance.py:1206} INFO - Marking task as FAILED. dag_id=flujo_etl_completo, task_id=dbt_transformacion, run_id=scheduled__2025-12-07T17:00:00+00:00, execution_date=20251207T170000, start_date=20251207T181855, end_date=20251207T181902
+[2025-12-07T18:19:02.120+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 4 for task dbt_transformacion (Docker container failed: {'StatusCode': 2}; 228)
+[2025-12-07T18:19:02.149+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 1
+[2025-12-07T18:19:02.180+0000] {taskinstance.py:3498} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-12-07T18:19:02.187+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

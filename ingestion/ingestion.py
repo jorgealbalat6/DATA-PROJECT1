@@ -104,11 +104,12 @@ def procesar_datos(cont):
     return cont
 
 if __name__ == "__main__":
-    time.sleep(30) # Esperar a que los servicios estén activos
-    print("Esperando inicio de servicios...")
-    while True:
-        if cont is not None:
-            cont = procesar_datos(cont)
-        else:
-            print("[ERROR] No se han descargado datos, saltando procesamiento.", flush=True)
-        time.sleep(3600)
+    print("--- Iniciando ejecución orquestada por Airflow ---")
+
+    if cont is not None:
+        cont = procesar_datos(cont)
+        print("Procesamiento finalizado con éxito.")
+    else:
+        print("[ERROR] No se han descargado datos, saltando procesamiento.", flush=True)
+            
+    print("--- Fin del script ---")

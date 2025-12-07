@@ -1,0 +1,58 @@
+[2025-12-07T12:43:41.186+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-12-07T12:43:41.219+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_general manual__2025-12-07T12:43:39.561530+00:00 [queued]>
+[2025-12-07T12:43:41.231+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: flujo_etl_completo.ingestion_general manual__2025-12-07T12:43:39.561530+00:00 [queued]>
+[2025-12-07T12:43:41.237+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-12-07T12:43:41.254+0000] {taskinstance.py:2330} INFO - Executing <Task(DockerOperator): ingestion_general> on 2025-12-07 12:43:39.561530+00:00
+[2025-12-07T12:43:41.267+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'flujo_etl_completo', 'ingestion_general', 'manual__2025-12-07T12:43:39.561530+00:00', '--job-id', '5', '--raw', '--subdir', 'DAGS_FOLDER/pipeline_completo.py', '--cfg-path', '/tmp/tmpltbq8r6r']
+[2025-12-07T12:43:41.271+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=228) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-12-07T12:43:41.273+0000] {standard_task_runner.py:91} INFO - Job 5: Subtask ingestion_general
+[2025-12-07T12:43:41.276+0000] {standard_task_runner.py:63} INFO - Started process 229 to run task
+[2025-12-07T12:43:41.380+0000] {task_command.py:426} INFO - Running <TaskInstance: flujo_etl_completo.ingestion_general manual__2025-12-07T12:43:39.561530+00:00 [running]> on host bb647276117e
+[2025-12-07T12:43:41.476+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='tu_nombre' AIRFLOW_CTX_DAG_ID='flujo_etl_completo' AIRFLOW_CTX_TASK_ID='ingestion_general' AIRFLOW_CTX_EXECUTION_DATE='2025-12-07T12:43:39.561530+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-12-07T12:43:39.561530+00:00'
+[2025-12-07T12:43:41.478+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-12-07T12:43:41.576+0000] {docker.py:366} INFO - Starting docker container from image ingestion:latest
+[2025-12-07T12:43:41.932+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-12-07T12:43:41.937+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/client.py", line 265, in _raise_for_status
+    response.raise_for_status()
+  File "/home/airflow/.local/lib/python3.12/site-packages/requests/models.py", line 1021, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: http+docker://localhost/v1.51/containers/2057c8f759ba654cd2121da06d1c6f54d1bc31e9daa77e4163dd364757dcdaea/start
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 400, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 509, in execute
+    return self._run_image()
+           ^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 383, in _run_image
+    return self._run_image_with_mounts(self.mounts, add_tmp_variable=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/docker/operators/docker.py", line 430, in _run_image_with_mounts
+    self.cli.start(self.container["Id"])
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/utils/decorators.py", line 19, in wrapped
+    return f(self, resource_id, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/container.py", line 1135, in start
+    self._raise_for_status(res)
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/api/client.py", line 267, in _raise_for_status
+    raise create_api_error_from_http_exception(e) from e
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/docker/errors.py", line 39, in create_api_error_from_http_exception
+    raise cls(e, response=response, explanation=explanation) from e
+docker.errors.NotFound: 404 Client Error for http+docker://localhost/v1.51/containers/2057c8f759ba654cd2121da06d1c6f54d1bc31e9daa77e4163dd364757dcdaea/start: Not Found ("failed to set up container networking: network kafka-net not found")
+[2025-12-07T12:43:41.955+0000] {taskinstance.py:1206} INFO - Marking task as FAILED. dag_id=flujo_etl_completo, task_id=ingestion_general, run_id=manual__2025-12-07T12:43:39.561530+00:00, execution_date=20251207T124339, start_date=20251207T124341, end_date=20251207T124341
+[2025-12-07T12:43:41.983+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 5 for task ingestion_general (404 Client Error for http+docker://localhost/v1.51/containers/2057c8f759ba654cd2121da06d1c6f54d1bc31e9daa77e4163dd364757dcdaea/start: Not Found ("failed to set up container networking: network kafka-net not found"); 229)
+[2025-12-07T12:43:42.017+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 1
+[2025-12-07T12:43:42.053+0000] {taskinstance.py:3498} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-12-07T12:43:42.059+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
