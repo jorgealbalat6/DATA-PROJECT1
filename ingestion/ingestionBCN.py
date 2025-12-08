@@ -109,8 +109,7 @@ def procesar_datos():
         print("No se generaron datos para insertar.")
 
 if __name__ == "__main__":
-    time.sleep(30) # Esperar a que los servicios estén activos
-    print("Esperando inicio de servicios...")
-    while True:
-        procesar_datos()
-        time.sleep(3600)
+    print("--- Iniciando ejecución orquestada por Airflow ---")
+    procesar_datos()
+    print("Procesamiento finalizado con éxito.")
+    print("--- Fin del script ---")
