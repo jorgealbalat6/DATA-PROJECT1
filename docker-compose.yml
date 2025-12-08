@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
 
   ingestion:
@@ -207,16 +205,6 @@ services:
       bash -c " echo 'Creando tópicos...' && kafka-topics --create --topic alertas_pob_generales --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists && kafka-topics --create --topic alertas_pob_riesgo --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists && kafka-topics --create --topic datos_pob_general --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists && kafka-topics --create --topic datos_pob_riesgo --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists && echo 'Tópicos creados.' "
     networks:
       - kafka-net
-
-  pgadmin:
-    container_name: pgadmim
-    image: dpage/pgadmin4:latest
-    env_file: .env
-    ports:
-      - "5050:80"
-    networks:
-      - kafka-net
-    restart: unless-stopped
 
   airflow-postgres:
     image: postgres:13
