@@ -27,7 +27,7 @@ docker compose up
 
 1. **Ingesta de datos**  
    - CSVs históricos mediante scripts batch  
-   - Datos en tiempo real a través de la API
+   - Datos actualizados cada hora a través de la API
 
 2. **Almacenamiento en PostgreSQL**  
    - Los datos crudos (raw) se guardan en la base de datos 
@@ -51,7 +51,7 @@ docker compose up
 
 ## Arquitectura
 
-- Orquestación: Airflow para programar y disparar pipelines.
+- Orquestación: Airflow para programar la activacion de la ingestión y de dbt.
 - Ingesta: API Flask y scripts batch para históricos.
 - Almacenamiento: PostgreSQL.
 - Transformación: dbt.
@@ -61,7 +61,7 @@ docker compose up
 ---
 ## Justificación
 
-- **API Flask**: Se eligió para la ingesta de datos en tiempo real para una mayor escalabilidad y que se puedan incorporar nuevas ciudades con mayor facilidad.
+- **API Flask**: Se eligió para la ingesta de datos a traves de una API para una mayor escalabilidad y que se puedan incorporar nuevas ciudades con mayor facilidad.
 
 - **PostgreSQL**: Base de datos relacional utilizada para almacenar datos históricos y en tiempo real. Se eligió SQL porque la estructura de los datos es fija (variables de calidad del aire) y permite definir un esquema claro y consistente. Además facilita las transformaciones posteriores con dbt y la consulta eficiente para los dashboards.
 
