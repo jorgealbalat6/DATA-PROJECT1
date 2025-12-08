@@ -88,8 +88,12 @@ services:
       dockerfile: Dockerfile.pyDashR
     image: dashboard_pob_riesgo:latest
     env_file: .env
+    ports:
+      - "8051:8051"
     depends_on:
       db:
+        condition: service_healthy
+      kafka:
         condition: service_healthy
     networks:
       - kafka-net
