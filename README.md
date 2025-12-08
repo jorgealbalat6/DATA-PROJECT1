@@ -79,7 +79,7 @@ docker compose up
 
 - **Kafka**: Se utiliza para la mensajería y el streaming de eventos entre los procesos de ingestión, transformación y visualización. Su elección se basa en su escalabilidad, robustez y facilidad de integración con múltiples consumidores simultáneos, como dashboards o alertas.
 
-- **Airflow**: Orquestador de pipelines ETL/ELT. Permite programar y disparar DAGs completos, incluyendo ingestión de datos históricos, transformaciones dbt y generación de alertas. Se eligió por su capacidad de monitoreo, reintentos automáticos y escalabilidad para pipelines complejos.
+- **Airflow**: Orquestador de pipelines ETL/ELT. Permite programar y disparar DAGs completos, incluyendo ingestión de datos históricos, transformaciones dbt. Se eligió por su capacidad de monitoreo, reintentos automáticos y escalabilidad para pipelines complejos, para poder manejar el orden y el momento de ejecución de cada contenedor concretamente del de ingestion con la API y el de DBT.
 
 - **Python**: Lenguaje principal para la implementación de scripts de ingestión, transformaciones intermedias y generación de alertas. Se eligió por su amplia adopción y facilidad de integración con Flask, Kafka y dbt.
 
