@@ -10,12 +10,9 @@ from datetime import datetime
 import time
 import os
 
-# Configuración de Kafka
 KAFKA_BOOTSTRAP_SERVERS = 'kafka:29092'
 TOPIC_DATOS = 'datos_pob_general'
 TOPIC_ALERTAS = 'alertas_pob_general'
-
-# Límites de calidad del aire desde marts_CalidadAire_general (µg/m³)
 LIMITES_CALIDAD = {
     'PM2.5': 18,
     'PM10': 35,
@@ -25,7 +22,6 @@ LIMITES_CALIDAD = {
     'CO': 8
 }
 
-# Colores para cada contaminante
 COLORES_MAGNITUDES = {
     'PM2.5': '#FF6B6B',
     'PM10': '#4ECDC4',
@@ -35,7 +31,6 @@ COLORES_MAGNITUDES = {
     'CO': '#DFE6E9'
 }
 
-# Almacenamiento de datos en memoria
 class DataStore:
     def __init__(self, maxlen=500):
         self.datos = deque(maxlen=maxlen)
@@ -62,10 +57,8 @@ class DataStore:
                 return pd.DataFrame()
             return pd.DataFrame(list(self.alertas))
 
-# Instancia global del almacén de datos
 data_store = DataStore()
 
-# Función para normalizar nombres de columnas
 def normalize_dataframe(df):
     """Normaliza nombres de columnas para compatibilidad"""
     if df.empty:
@@ -73,13 +66,10 @@ def normalize_dataframe(df):
     
     df = df.copy()
     
-    # Renombrar 'indicador' a 'magnitud' si existe
     if 'indicador' in df.columns and 'magnitud' not in df.columns:
         df.rename(columns={'indicador': 'magnitud'}, inplace=True)
     
     return df
-
-# Función para consumir datos de Kafka
 def consume_datos():
     consumer_config = {
         'bootstrap.servers': KAFKA_BOOTSTRAP_SERVERS,
@@ -112,8 +102,6 @@ def consume_datos():
         except Exception as e:
             print(f"Error procesando mensaje de datos: {e}")
             time.sleep(5)
-
-# Función para consumir alertas de Kafka
 def consume_alertas():
     consumer_config = {
         'bootstrap.servers': KAFKA_BOOTSTRAP_SERVERS,
@@ -146,14 +134,10 @@ def consume_alertas():
         except Exception as e:
             print(f"Error procesando mensaje de alertas: {e}")
             time.sleep(5)
-
-# Iniciar consumidores en hilos separados
 thread_datos = threading.Thread(target=consume_datos, daemon=True)
 thread_alertas = threading.Thread(target=consume_alertas, daemon=True)
 thread_datos.start()
 thread_alertas.start()
-
-# Función para determinar el color basado en el valor y límite
 def get_color_by_level(valor, limite):
     if valor < limite * 0.5:
         return '#2ecc71'  # Verde - Bueno
@@ -164,10 +148,8 @@ def get_color_by_level(valor, limite):
     else:
         return '#e74c3c'  # Rojo - No saludable
 
-# Inicializar la aplicación Dash
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-# Layout del dashboard
 app.layout = dbc.Container([
     # Header
     dbc.Row([
@@ -310,15 +292,12 @@ app.layout = dbc.Container([
         ])
     ]),
     
-    # Intervalo para actualización automática
     dcc.Interval(
         id='interval-component',
-        interval=5*1000,  # 5 segundos
+        interval=5*1000,  
         n_intervals=0
     )
 ], fluid=True, style={'backgroundColor': '#f8f9fa'})
-
-# Callbacks
 @app.callback(
     [Output('last-update', 'children'),
      Output('kpi-pm25', 'children'),
@@ -339,18 +318,14 @@ def update_dashboard(n, selected_pollutant, selected_city):
     df = data_store.get_datos_df()
     df_alertas = data_store.get_alertas_df()
     
-    # Normalizar nombres de columnas
     df = normalize_dataframe(df)
     df_alertas = normalize_dataframe(df_alertas)
     
-    # Filtrar por ciudad si es necesario
     if selected_city != 'Todas' and not df.empty and 'municipio' in df.columns:
         df = df[df['municipio'] == selected_city]
     
-    # Última actualización
     last_update = f"Última actualización: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | Ciudad: {selected_city}"
     
-    # KPIs - calcular promedios recientes por magnitud
     kpis = {}
     for magnitud in ['PM2.5', 'PM10', 'NO2', 'O3', 'SO2', 'CO']:
         if not df.empty and 'magnitud' in df.columns:
@@ -363,27 +338,22 @@ def update_dashboard(n, selected_pollutant, selected_city):
         else:
             kpis[magnitud] = "N/A"
     
-    # Mapa interactivo
     map_fig = go.Figure()
     
     if not df.empty and 'latitud' in df.columns and 'longitud' in df.columns and 'magnitud' in df.columns:
-        # Filtrar por el contaminante seleccionado
         df_map = df[df['magnitud'] == selected_pollutant].copy()
         
         if not df_map.empty:
-            # Obtener último valor por estación
             df_map = df_map.sort_values('timestamp').groupby('estacion').tail(1)
             
-            # Filtrar filas con coordenadas válidas
             df_map = df_map.dropna(subset=['latitud', 'longitud'])
             
             if not df_map.empty:
-                # Calcular colores basados en límites
+                
                 limite = LIMITES_CALIDAD.get(selected_pollutant, 100)
                 df_map['color'] = df_map['valor'].apply(lambda x: get_color_by_level(x, limite))
                 df_map['size'] = df_map['valor'].apply(lambda x: min(max(x/limite * 30, 15), 50))
                 
-                # Crear texto hover
                 df_map['hover_text'] = df_map.apply(
                     lambda row: f"<b>{row.get('estacion', 'N/A')}</b><br>" +
                                f"{row.get('municipio', 'N/A')}<br>" +
@@ -406,7 +376,6 @@ def update_dashboard(n, selected_pollutant, selected_city):
                     name=selected_pollutant
                 ))
                 
-                # Centrar mapa
                 center_lat = df_map['latitud'].mean()
                 center_lon = df_map['longitud'].mean()
                 
@@ -421,9 +390,7 @@ def update_dashboard(n, selected_pollutant, selected_city):
                     margin=dict(l=0, r=0, t=0, b=0)
                 )
     
-    # Si no hay datos válidos para el mapa
     if len(map_fig.data) == 0:
-        # Centrar en Madrid o Barcelona según selección
         if selected_city == 'Barcelona':
             center_coords = (41.3851, 2.1734)
         else:
@@ -450,19 +417,15 @@ def update_dashboard(n, selected_pollutant, selected_city):
             ]
         )
     
-    # Tabla de datos por estación
     station_table = html.P("No hay datos disponibles", className="text-muted text-center")
     
     if not df.empty and 'estacion' in df.columns and 'magnitud' in df.columns and 'valor' in df.columns:
-        # Filtrar solo los contaminantes deseados
         contaminantes_deseados = ['PM2.5', 'PM10', 'NO2', 'O3', 'SO2', 'CO']
         df_filtered = df[df['magnitud'].isin(contaminantes_deseados)]
         
         if not df_filtered.empty:
-            # Obtener últimos datos por estación y magnitud
             df_pivot = df_filtered.sort_values('timestamp').groupby(['estacion', 'magnitud']).tail(1)
             
-            # Crear pivot table: estaciones en filas, magnitudes en columnas
             pivot_data = df_pivot.pivot_table(
                 index='estacion',
                 columns='magnitud',
@@ -471,19 +434,15 @@ def update_dashboard(n, selected_pollutant, selected_city):
             ).reset_index()
             
             if not pivot_data.empty:
-                # Reordenar columnas en el orden deseado
                 cols_order = ['estacion'] + [c for c in contaminantes_deseados if c in pivot_data.columns]
                 pivot_data = pivot_data[cols_order]
                 
-                # Formatear valores
                 for col in pivot_data.columns:
                     if col != 'estacion':
                         pivot_data[col] = pivot_data[col].apply(lambda x: f"{x:.1f}" if pd.notna(x) else "N/A")
                 
-                # Crear columnas para la tabla
                 columns = [{"name": col, "id": col} for col in pivot_data.columns]
                 
-                # Estilo condicional para resaltar valores que exceden límites
                 style_data_conditional = [
                     {
                         'if': {'row_index': 'odd'},
@@ -509,21 +468,17 @@ def update_dashboard(n, selected_pollutant, selected_city):
                     page_size=15
                 )
     
-    # Tabla de alertas
     alerts_table = html.P("No hay alertas activas", className="text-muted text-center")
     alert_count = "0"
     
     if not df_alertas.empty:
-        # Filtrar por ciudad si es necesario
         df_alertas_filtered = df_alertas
         if selected_city != 'Todas' and 'municipio' in df_alertas.columns:
             df_alertas_filtered = df_alertas[df_alertas['municipio'] == selected_city]
         
         if not df_alertas_filtered.empty:
-            # Ordenar por timestamp descendente
             df_alertas_sorted = df_alertas_filtered.sort_values('timestamp', ascending=False).head(20)
             
-            # Preparar datos para la tabla
             alerts_data = []
             for _, row in df_alertas_sorted.iterrows():
                 alerts_data.append({
