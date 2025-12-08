@@ -105,7 +105,15 @@ services:
       context: ./analisis_historico
       dockerfile: Dockerfile.pyAnalisis
     image: analisis_historico:latest
-    profiles: [ "workers" ]
+    env_file: .env
+    volumes:
+      - ./analisis_historico:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - kafka-net
+    restart: "no"
 
   db:
     image: postgres:17-alpine
