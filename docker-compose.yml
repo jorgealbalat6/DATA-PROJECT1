@@ -72,8 +72,12 @@ services:
       dockerfile: Dockerfile.pyDashG
     image: dashboard_pob_general:latest
     env_file: .env
+    ports:
+      - "8050:8050"
     depends_on:
       db:
+        condition: service_healthy
+      kafka:
         condition: service_healthy
     networks:
       - kafka-net
@@ -98,12 +102,12 @@ services:
     image: dbt:latest
     profiles: [ "workers" ]
 
-  analisis_historico:
-    build:
-      context: ./analisis_historico
-      dockerfile: Dockerfile.pyAnalisis
-    image: analisis_historico:latest
-    profiles: [ "workers" ]
+  # analisis_historico:
+  #   build:
+  #     context: ./analisis_historico
+  #     dockerfile: Dockerfile.pyAnalisis
+  #   image: analisis_historico:latest
+  #   profiles: [ "workers" ]
 
   db:
     image: postgres:17-alpine
