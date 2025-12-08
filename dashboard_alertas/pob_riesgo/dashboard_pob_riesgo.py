@@ -70,10 +70,12 @@ def normalize_dataframe(df):
         df.rename(columns={'indicador': 'magnitud'}, inplace=True)
     
     return df
+
+# Función para consumir datos de Kafka
 def consume_datos():
     consumer_config = {
         'bootstrap.servers': KAFKA_BOOTSTRAP_SERVERS,
-        'group.id': 'dashboard-datos-riesgo-group',
+        'group.id': 'dashboard-datos-group',
         'auto.offset.reset': 'latest',
         'enable.auto.commit': True
     }
@@ -102,10 +104,12 @@ def consume_datos():
         except Exception as e:
             print(f"Error procesando mensaje de datos: {e}")
             time.sleep(5)
+
+# Función para consumir alertas de Kafka
 def consume_alertas():
     consumer_config = {
         'bootstrap.servers': KAFKA_BOOTSTRAP_SERVERS,
-        'group.id': 'dashboard-alertas-riesgo-group',
+        'group.id': 'dashboard-alertas-group',
         'auto.offset.reset': 'latest',
         'enable.auto.commit': True
     }
