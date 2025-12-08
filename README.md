@@ -90,5 +90,4 @@ docker compose up
 - Javier Plaza
 - Jorge Albalat
 - Salvador Reche
-- Marina Azul López
-
+- Marina Azul Lopez
