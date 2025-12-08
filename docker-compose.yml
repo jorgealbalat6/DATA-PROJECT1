@@ -11,7 +11,7 @@ services:
 
   ingestionMAD:
     build:
-      context: ./ingestion_datosMAD
+      context: ./ingestion_datos_historicos
       dockerfile: Dockerfile.pyIngestionMAD
     image: ingestion_datosmad:latest
     profiles: ["workers"]
