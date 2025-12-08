@@ -47,9 +47,9 @@ with DAG(
         force_pull=False
     )
 
-    t_ingest_mad = DockerOperator(
-        task_id='ingestion_madrid',
-        image='ingestion_datosmad:latest',
+    t_ingest_historicos = DockerOperator(
+        task_id='ingestion_historicos',
+        image='ingestion_datos_historicos:latest',
         api_version='auto',
         auto_remove=True,
         network_mode='kafka-net',
@@ -68,21 +68,9 @@ with DAG(
         docker_url="unix://var/run/docker.sock",
         environment=env_vars,
         mount_tmp_dir=False,
-        force_pull=False # <--- IMPORTANTE
+        force_pull=False
     )
 
-    # t_alertas = DockerOperator(
-    #     task_id='generar_alertas',
-    #     image='alertas_pob_general:latest',
-    #     api_version='auto',
-    #     auto_remove=True,
-    #     network_mode='kafka-net',
-    #     docker_url="unix://var/run/docker.sock",
-    #     environment=env_vars,
-    #     mount_tmp_dir=False,
-    #     force_pull=False
-    # )
-
-
-    start >> [t_ingest_general, t_ingest_mad]
-    [t_ingest_general, t_ingest_mad] >> t_dbt
+    # Definición de dependencias                
+    start >> [t_ingest_general, t_ingest_historicos]
+    [t_ingest_general, t_ingest_historicos] >> t_dbt
