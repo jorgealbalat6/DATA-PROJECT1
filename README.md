@@ -58,6 +58,12 @@ docker compose up
 - Streaming: Kafka (topics para datos y alertas).
 - Visualización: Dashboards (Plotly) consumiendo los modelos.
 
+
+
+  ![alt text](image.png)
+
+
+
 ---
 ## Justificación
 
