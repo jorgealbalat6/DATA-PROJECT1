@@ -2,4 +2,5 @@ logs/dag_id=flujo_etl_completo
 logs/dag_processor_manager
 logs/scheduler
 dags/__pycache__/
+dags/__pycache__
 __pycache__
