@@ -6,7 +6,7 @@ from airflow.utils.dates import days_ago
 
 # Configuración básica
 default_args = {
-    'owner': 'tu_nombre',
+    'owner': 'EDEM_MDA_DATA_PROJECT1',
     'start_date': days_ago(1),
     'retries': 0,
 }
