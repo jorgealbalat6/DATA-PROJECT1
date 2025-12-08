@@ -1,20 +1,20 @@
 WITH calidad_aire AS (
     SELECT * FROM {{ ref('int_CalidadAire') }}
 )
-SELECT id, municipio, magnitud, estacion, indicador, fecha, valor, datos_disponibles, latitud, longitud
+SELECT id, municipio, estacion, indicador, fecha, valor, latitud, longitud
 FROM calidad_aire
 WHERE 
-    magnitud IN ('1', '6', '7', '8', '9', '10', '12', '14')
+    indicador IN ('PM2.5', 'PM10', 'NO2', 'O3', 'SO2', 'CO')
     AND (
-        (magnitud = '9'  AND valor >= 18)  -- PM2.5: Límite alto
+        (indicador = 'PM2.5'  AND valor >= 18)  -- PM2.5: Límite alto
         OR 
-        (magnitud = '10' AND valor >= 35)  -- PM10: Límite diario oficial
+        (indicador = 'PM10' AND valor >= 35)  -- PM10: Límite diario oficial
         OR 
-        (magnitud = '8'  AND valor >= 65) -- NO2: Umbral de alerta horaria
+        (indicador = 'NO2'  AND valor >= 65) -- NO2: Umbral de alerta horaria
         OR 
-        (magnitud = '14' AND valor >= 115) -- O3: Umbral de información pública
+        (indicador = 'O3' AND valor >= 115) -- O3: Umbral de información pública
         OR 
-        (magnitud = '1'  AND valor >= 140) -- SO2: Umbral de alerta
+        (indicador = 'SO2'  AND valor >= 140) -- SO2: Umbral de alerta
         OR
-        (magnitud = '6'  AND valor >= 8)   -- CO
+        (indicador = 'CO'  AND valor >= 8)   -- CO
     )
