@@ -5,3 +5,4 @@ cd proyecto_dbt
 dbt run --profiles-dir .
 cd ..
 echo "Exito dbt"
+
