@@ -1,13 +1,13 @@
 version: '3.9'
 
 services:
-  
+
   ingestion:
     build:
       context: ./ingestion
       dockerfile: Dockerfile.pyIngestion
     image: ingestion:latest
-    profiles: ["workers"]
+    profiles: [ "workers" ]
 
   ingestion_datos_historicos:
     build:
@@ -98,14 +98,14 @@ services:
       context: ./dbt
       dockerfile: Dockerfile.pyDBT
     image: dbt:latest
-    profiles: ["workers"]
+    profiles: [ "workers" ]
 
   analisis_historico:
     build:
       context: ./analisis_historico
       dockerfile: Dockerfile.pyAnalisis
     image: analisis_historico:latest
-    profiles: ["workers"]
+    profiles: [ "workers" ]
 
   db:
     image: postgres:17-alpine
@@ -204,14 +204,7 @@ services:
       kafka:
         condition: service_healthy
     command: >
-      bash -c "
-      echo 'Creando tópicos...' &&
-      kafka-topics --create --topic alertas_pob_generales --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists &&
-      kafka-topics --create --topic alertas_pob_riesgo --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists &&
-      kafka-topics --create --topic datos_pob_general --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists &&
-      kafka-topics --create --topic datos_pob_riesgo --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists &&
-      echo 'Tópicos creados.'
-      "
+      bash -c " echo 'Creando tópicos...' && kafka-topics --create --topic alertas_pob_generales --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists && kafka-topics --create --topic alertas_pob_riesgo --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists && kafka-topics --create --topic datos_pob_general --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists && kafka-topics --create --topic datos_pob_riesgo --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --if-not-exists && echo 'Tópicos creados.' "
     networks:
       - kafka-net
 
@@ -234,7 +227,7 @@ services:
     networks:
       - kafka-net
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "airflow"]
+      test: [ "CMD", "pg_isready", "-U", "airflow" ]
       interval: 5s
       retries: 5
 
@@ -259,13 +252,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.airflow
+    user: root
     restart: always
     env_file: .env
     environment:
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
       - AIRFLOW__CORE__LOAD_EXAMPLES=false
-      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=false 
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=false
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
@@ -281,7 +275,7 @@ services:
     networks:
       - kafka-net
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      test: [ "CMD", "curl", "--fail", "http://localhost:8080/health" ]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -290,6 +284,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.airflow
+    user: root
     restart: always
     env_file: .env
     environment:

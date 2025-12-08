@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN pip install -r requirements.txt
+RUN pip install --default-timeout=100 -r requirements.txt
 
 COPY --chmod=755 ingestion_historicos.sh .
 RUN sed -i 's/\r$//' ingestion_historicos.sh
