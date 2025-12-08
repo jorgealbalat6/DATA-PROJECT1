@@ -60,7 +60,7 @@ docker compose up
 
 
 
-  ![alt text](image.png)
+  ![alt text](esquema.jpg)
 
 
 
