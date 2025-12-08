@@ -9,11 +9,11 @@ services:
     image: ingestion:latest
     profiles: ["workers"]
 
-  ingestionMAD:
+  ingestionH:
     build:
       context: ./ingestion_datos_historicos
-      dockerfile: Dockerfile.pyIngestionMAD
-    image: ingestion_datosmad:latest
+      dockerfile: Dockerfile.pyIngestionH
+    image: ingestion_datos_historicos:latest
     profiles: ["workers"]
 
   alertas_pob_general:
