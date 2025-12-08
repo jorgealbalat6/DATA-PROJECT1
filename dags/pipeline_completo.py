@@ -47,17 +47,6 @@ with DAG(
         force_pull=False
     )
 
-    t_ingest_historicos = DockerOperator(
-        task_id='ingestion_historicos',
-        image='ingestion_datos_historicos:latest',
-        api_version='auto',
-        auto_remove=True,
-        network_mode='kafka-net',
-        docker_url="unix://var/run/docker.sock",
-        environment=env_vars,
-        mount_tmp_dir=False,
-        force_pull=False
-    )
 
     t_dbt = DockerOperator(
         task_id='dbt_transformacion',
@@ -72,5 +61,4 @@ with DAG(
     )
 
     # Definición de dependencias                
-    start >> [t_ingest_general, t_ingest_historicos]
-    [t_ingest_general, t_ingest_historicos] >> t_dbt
+    start >> t_ingest_general >> t_dbt

@@ -9,12 +9,15 @@ services:
     image: ingestion:latest
     profiles: ["workers"]
 
-  ingestionH:
+  ingestion_datos_historicos:
     build:
       context: ./ingestion_datos_historicos
       dockerfile: Dockerfile.pyIngestionH
     image: ingestion_datos_historicos:latest
-    profiles: ["workers"]
+    env_file: .env
+    networks:
+      - kafka-net
+    restart: "no"
 
   alertas_pob_general:
     build:
