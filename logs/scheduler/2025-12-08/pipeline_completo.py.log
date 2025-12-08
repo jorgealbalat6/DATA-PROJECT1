@@ -1,0 +1,7 @@
+[2025-12-08T01:02:35.048+0000] {processor.py:161} INFO - Started process (PID=221) to work on /opt/airflow/dags/pipeline_completo.py
+[2025-12-08T01:02:35.049+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/pipeline_completo.py for tasks to queue
+[2025-12-08T01:02:35.053+0000] {logging_mixin.py:188} INFO - [2025-12-08T01:02:35.053+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/pipeline_completo.py
+[2025-12-08T01:02:35.168+0000] {processor.py:840} INFO - DAG(s) 'flujo_etl_completo' retrieved from /opt/airflow/dags/pipeline_completo.py
+[2025-12-08T01:02:35.319+0000] {logging_mixin.py:188} INFO - [2025-12-08T01:02:35.319+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-12-08T01:02:35.347+0000] {logging_mixin.py:188} INFO - [2025-12-08T01:02:35.346+0000] {dag.py:3954} INFO - Setting next_dagrun for flujo_etl_completo to 2025-12-08 01:00:00+00:00, run_after=2025-12-08 02:00:00+00:00
+[2025-12-08T01:02:35.401+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/pipeline_completo.py took 0.359 seconds
