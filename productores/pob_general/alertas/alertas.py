@@ -6,6 +6,15 @@ import psycopg
 from datetime import datetime, date
 from decimal import Decimal
 
+LIMITES = {
+    'PM2.5': 18,
+    'PM10': 35,
+    'NO2': 65,
+    'O3': 115,
+    'SO2': 140,
+    'CO': 8,
+}
+
 config = {
     'bootstrap.servers': 'kafka:29092',
 }
@@ -65,7 +74,7 @@ def procesar_alertas():
                     alertas_enviadas = 0
                     for fila in registros:
                         data = dict(zip(col_names, fila))
-                        magnitud = data.get('magnitud')
+                        magnitud = data.get('indicador')
                         valor = data.get('valor')
                         if magnitud in LIMITES and valor is not None:
                             limite = LIMITES[magnitud]
